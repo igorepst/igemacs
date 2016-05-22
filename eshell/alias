@@ -1,0 +1,7 @@
+alias pi pacaur -S $*
+alias psu pacaur -Syu
+alias d dired $1
+alias ff find-file $1
+alias la ls -Alh $*
+alias FF find-file-other-window $1
+alias x exit
