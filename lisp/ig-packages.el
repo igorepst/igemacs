@@ -316,7 +316,7 @@
   (push '(font . :never) frameset-filter-alist)
   :config
   (setq desktop-save t
-	desktop-load-locked-desktop t
+	desktop-load-locked-desktop nil
 	desktop-path (list volatile-dir))
   (desktop-save-mode 1))
 

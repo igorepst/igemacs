@@ -76,13 +76,18 @@ Argument UNRESTRICTED makes 'ag' to search all files."
       (advice-add 'helm-ag--action-find-file :override #'ig-helm-ag--action-find-file)
       (helm-ag-project-root)
       (advice-remove 'helm-ag--action-find-file #'ig-helm-ag--action-find-file)))
+
+  (defun ig-helm-do-ag ()
+    "Wrapper to pass default directory."
+    (interactive)
+    (helm-do-ag default-directory))
   :bind (("C-c a" . ig-helm-ag-command-prefix)
 	 :map ig-helm-ag-command-map
 	 ("f" . ig-helm-ag-search-for-file-project-root)
-	 ("a" . helm-ag)
-	 ("t" . helm-ag-this-file)
-	 ("p" . helm-ag-project-root)
-	 ("b" . helm-ag-buffers)))
+	 ("a" . ig-helm-do-ag)
+	 ("t" . helm-do-ag-this-file)
+	 ("p" . helm-do-ag-project-root)
+	 ("b" . helm-do-ag-buffers)))
 
 
 
