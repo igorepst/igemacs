@@ -15,19 +15,19 @@
 
 <!-- markdown-toc end -->
 # Highlights
-1. Tested on [Arch Linux](https://www.archlinux.org) and [Cygwin](https://www.cygwin.com) with **Emacs 24.5** only
+1. Tested on [Arch Linux](https://www.archlinux.org) with **Emacs 25.1** only
 
 2. [Fonts support](lisp/ig-fonts.el) made easy per font/Unicode block/size
 
     ![fonts](ghmd/screens/fonts.png)
 
-3. Fast initialization ([use-package](https://github.com/jwiegley/use-package) and more). **0.2 sec.** for `emacsclient`, **0.5 sec** for `emacs` with **SSD** on **Linux**, measured by `(emacs-init-time)`
+3. Fast initialization ([use-package](https://github.com/jwiegley/use-package) and more). **0.6 sec.** for `emacsclient`, **0.7 sec** for `emacs` with **SSD** on **Linux**, measured by `(emacs-init-time)`
 
 4. All temporary files (history,session,tramp, etc.) in `volatile` directory
 
 5. Custom command line arguments to use various runtime profiles. See [Makefile](Makefile) for example usage
 
-6. Beautiful [alect themes](https://github.com/alezost/alect-themes), [rainbow-identifiers](https://github.com/Fanael/rainbow-identifiers), [rainbow-delimiters](https://github.com/Fanael/rainbow-delimiters), [spaceline](https://github.com/TheBB/spaceline)
+6. Beautiful [alect themes](https://github.com/alezost/alect-themes), [rainbow-delimiters](https://github.com/Fanael/rainbow-delimiters), [spaceline](https://github.com/TheBB/spaceline)
 
     ![theme](ghmd/screens/theme.png)
 
@@ -61,5 +61,3 @@
 ## Minimal config for testing
 
 	make min
-
-
