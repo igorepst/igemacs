@@ -15,7 +15,7 @@ if not "%arg1%"=="" (
       goto :min
    )
 )
-runemacs
+runemacs %*
 goto :eof
 
 :profile
@@ -29,7 +29,7 @@ goto :eof
 :up
 rem git pull
 rem emacs -batch -Q -l init.el -f ig-update-all-autoloads -- --ig-profile-minimal
-runemacs -batch -Q -l init.el -- --ig-profile=update
+emacs -batch -Q -l init.el -- --ig-profile=update
 goto :eof
 
 :min
