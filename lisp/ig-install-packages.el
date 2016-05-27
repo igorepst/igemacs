@@ -27,6 +27,7 @@
     go-mode
     json-mode
     magit
+    buffer-move
     ;; org
     org-plus-contrib
     org-bullets
