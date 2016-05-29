@@ -28,6 +28,7 @@
     json-mode
     magit
     buffer-move
+    yasnippet
     ;; org
     org-plus-contrib
     org-bullets

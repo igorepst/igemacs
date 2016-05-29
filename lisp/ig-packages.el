@@ -50,6 +50,7 @@
   :init
   (add-hook 'prog-mode-hook 'company-mode)
   (add-hook 'eshell-mode-hook 'company-mode)
+  (add-hook 'org-mode-hook 'company-mode)
   :config
   (setq company-backends '((company-capf company-dabbrev-code company-files))
 	company-idle-delay 0.1
@@ -126,7 +127,8 @@
    :map ig-org-command-map
    ("l" . org-store-link)
    ("a" . org-agenda)
-   ("c" . org-capture)))
+   ("c" . org-capture)
+   ("p" . ig-yank-html-to-org)))
 
 
 
@@ -189,7 +191,7 @@
   :config
   (add-hook 'markdown-mode-hook
 	    (lambda () (setq-local ig-indent-command
-			      '(lambda () (error "Indenting Markdown is not supported")))))
+				   '(lambda () (error "Indenting Markdown is not supported")))))
   (when (executable-find "pandoc")
     ;; https://gist.github.com/fredRos/0e3a845de95ec654538f
     (setq markdown-command (concat "pandoc -c file://"
@@ -211,8 +213,8 @@
 
 (defvar ig-indent-command
   '(lambda () (if (region-active-p)
-	     (indent-region (region-beginning) (region-end))
-	   (indent-region (point-min) (point-max))))
+		  (indent-region (region-beginning) (region-end))
+		(indent-region (point-min) (point-max))))
   "Set default indentation command.")
 
 (use-package ig-edit
@@ -309,16 +311,29 @@
 
 
 
-;; Built in - desktop
-(use-package desktop
+(use-package yasnippet
+  :diminish yas-minor-mode
+  :commands (yas-minor-mode)
   :init
-  ;; Fix problem of saving TTY font, failing to restore it in GUI
-  (push '(font . :never) frameset-filter-alist)
+  (add-hook 'prog-mode-hook #'yas-minor-mode)
+  (add-hook 'org-mode-hook #'yas-minor-mode)
   :config
-  (setq desktop-save t
-	desktop-load-locked-desktop nil
-	desktop-path (list volatile-dir))
-  (desktop-save-mode 1))
+  (yas-reload-all)
+  :bind
+  ("C-c y" . company-yasnippet))
+
+
+
+;; Built in - desktop
+;; (use-package desktop
+;;   :init
+;;   ;; Fix problem of saving TTY font, failing to restore it in GUI
+;;   (push '(font . :never) frameset-filter-alist)
+;;   :config
+;;   (setq desktop-save t
+;; 	desktop-load-locked-desktop nil
+;; 	desktop-path (list volatile-dir))
+;;   (desktop-save-mode 1))
 
 
 

@@ -26,6 +26,35 @@
 			      `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.3))))
 			      `(org-document-title ((t (,@headline ,@variable-tuple :height 1.3 :underline nil))))))))
 
+(defun ig-add-nbsp-to-org-emphasis ()
+  "Add non breaking space to `org-emphasis-regexp-components'.
+Used with pandoc, but shouldn't hurt anyway."
+  ;; http://www.xiangji.me/2015/07/13/a-few-of-my-org-mode-customizations/
+  (let ((ig-nbsp (string ?\u00A0)) (ig-nbsp-added-p nil)
+	(ig-nbsp-cand1 (car org-emphasis-regexp-components))
+	(ig-nbsp-cand2 (car (nthcdr 1 org-emphasis-regexp-components))))
+    (unless (string-match-p ig-nbsp ig-nbsp-cand1)
+      (setcar org-emphasis-regexp-components (concat ig-nbsp-cand1 ig-nbsp))
+      (setq ig-nbsp-added-p t))
+    (unless (string-match-p ig-nbsp ig-nbsp-cand2)
+      (setcar (nthcdr 1 org-emphasis-regexp-components) (concat ig-nbsp-cand2 ig-nbsp))
+      (setq ig-nbsp-added-p t))
+    (when ig-nbsp-added-p
+      ;; http://permalink.gmane.org/gmane.emacs.orgmode/82672
+      (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
+      ;; https://github.com/xiaohanyu/oh-my-emacs/blob/master/core/ome-org.org#code-block-fontification
+      (require 'org-element)
+      (org-element--set-regexps))))
+
+;; http://emacs.stackexchange.com/a/12124/2477
+(defun ig-yank-html-to-org ()
+  "Convert clipboard contents from HTML to Org and yank."
+  (interactive)
+  (when (and (executable-find "xclip") (executable-find "pandoc"))
+    (kill-new (shell-command-to-string
+	       "xclip -o -t text/html | pandoc -f html -t json | pandoc -f json -t org --no-wrap")))
+  (yank))
+
 ;; http://orgmode.org
 ;; Parts from http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html
 (use-package org
@@ -47,8 +76,10 @@
   	org-catch-invisible-edits `show-and-error
   	org-M-RET-may-split-line nil
   	org-list-use-circular-motion t
-  	org-startup-folded t)
+  	org-startup-folded t
+	org-src-fontify-natively t)
   (unless (daemonp) (ig-setup-org-headings (selected-frame)))
+  (ig-add-nbsp-to-org-emphasis)
   ;; Convert asterisks & dashes in bullet lists to Unicode char
   (font-lock-add-keywords 'org-mode
   			  '(("^ +\\([-*]\\) "
