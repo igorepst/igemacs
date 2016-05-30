@@ -168,6 +168,12 @@ This functions should be added to the hooks of major modes for programming."
 
 
 
+(setq visual-line-fringe-indicators '(left-curly-arrow nil))
+(add-hook 'org-mode-hook 'turn-on-visual-line-mode)
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+
+
+
 (use-package ig-packages)
 
 
