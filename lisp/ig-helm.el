@@ -72,7 +72,11 @@
     "Search for files by names via `helm-ag'.
 Argument UNRESTRICTED makes 'ag' to search all files."
     (interactive "P")
-    (let ((helm-ag-base-command (if unrestricted "ag -u -g" "ag -g")) (current-prefix-arg nil))
+    (let ((helm-ag-base-command
+	   (if (helm-ag--windows-p)
+	       (if unrestricted "ag --vimgrep -u -g" "ag --vimgrep -g")
+	     (if unrestricted "ag -u -g" "ag -g")))
+	  (current-prefix-arg nil))
       (advice-add 'helm-ag--action-find-file :override #'ig-helm-ag--action-find-file)
       (helm-ag-project-root)
       (advice-remove 'helm-ag--action-find-file #'ig-helm-ag--action-find-file)))
