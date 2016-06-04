@@ -1,11 +1,13 @@
 ;;; ig-packages.el --- Packages configuration
 
 ;;; Commentary:
-;;
-
+;; Configuration of used packages.
 
 ;;; Code:
 
+
+
+;; ig-helm
 (defvar ig-helm-open-command-map (make-sparse-keymap)
   "Keymap for opening important files via `helm'.")
 (defvar ig-helm-open-command-prefix nil
@@ -23,6 +25,52 @@
    ("i" . ig-open-important-files)
    ("o" . ig-open-org-files)))
 
+
+
+;; Built-in - isearch
+(use-package isearch
+  :init
+  ;; http://ergoemacs.org/emacs/elisp_thing-at-point_problems.html
+  (defun ig-isearch-get-word-at-point ()
+    "Return word at point."
+    (let (start end)
+      (if mark-active
+	  (progn
+	    (setq start (region-beginning))
+	    (setq end (region-end)))
+	(let ((exp "[:alnum:]-_") (orig (point)))
+	  (setq start (+ orig (skip-chars-backward exp)))
+	  (setq end (+ start (skip-chars-forward exp)))
+	  (goto-char orig)))
+      (buffer-substring-no-properties start end)))
+
+  (defun ig-isearch-word-at-point ()
+    "Search for word at point."
+    (interactive)
+    (let ((ig-isearch-word (ig-isearch-get-word-at-point)))
+      (deactivate-mark)
+      ;; Exit previous search, if any
+      (let ((search-nonincremental-instead nil)
+	    (isearch--current-buffer (current-buffer)))
+	(isearch-exit))
+      (isearch-mode t)
+      (isearch-yank-string ig-isearch-word)))
+
+  (defun ig-isearch-yank-word-at-point ()
+    "Yank word at point during `isearch'."
+    (interactive)
+    (isearch-yank-string (ig-isearch-get-word-at-point)))
+  :bind
+  (("C-z" . ig-isearch-word-at-point)
+   :map isearch-mode-map
+   ("<up>" . isearch-ring-retreat)
+   ("<down>" . isearch-ring-advance)
+   ("<left>" . isearch-repeat-backward)
+   ("<right>" . isearch-repeat-forward)
+   ("C-w" . ig-isearch-yank-word-at-point)))
+
+
+
 ;; https://github.com/purcell/elisp-slime-nav
 (use-package elisp-slime-nav
   :diminish ""
@@ -33,9 +81,13 @@
   (:map elisp-slime-nav-mode-map
 	("M-z" . elisp-slime-nav-describe-elisp-thing-at-point)))
 
+
+
 ;; https://github.com/Fanael/rainbow-delimiters
 (use-package rainbow-delimiters
   :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+
+
 
 ;; http://company-mode.github.io/
 (use-package company
@@ -66,11 +118,15 @@
     (setq company-quickhelp-delay 0.1)
     (company-quickhelp-mode 1)))
 
+
+
 ;; https://github.com/pitkali/pos-tip
 (use-package pos-tip
   :config
   (setq pos-tip-foreground-color (alect-get-color 'dark 'fg-1)
 	pos-tip-background-color (alect-get-color 'dark 'bg+1)))
+
+
 
 ;; https://github.com/justbur/emacs-which-key
 (use-package which-key
@@ -109,9 +165,9 @@
   :config
   (add-hook 'emacs-lisp-mode-hook 'form-feed-mode))
 
-
 
 
+;; ig-org
 (defvar ig-org-command-map (make-sparse-keymap)
   "Keymap for `org'.")
 (defvar ig-org-command-prefix nil
@@ -191,7 +247,7 @@
   :config
   (add-hook 'markdown-mode-hook
 	    (lambda () (setq-local ig-indent-command
-				   '(lambda () (error "Indenting Markdown is not supported")))))
+			      '(lambda () (error "Indenting Markdown is not supported")))))
   (when (executable-find "pandoc")
     ;; https://gist.github.com/fredRos/0e3a845de95ec654538f
     (setq markdown-command (concat "pandoc -c file://"
@@ -211,10 +267,11 @@
 
 
 
+;; ig-edit
 (defvar ig-indent-command
   '(lambda () (if (region-active-p)
-		  (indent-region (region-beginning) (region-end))
-		(indent-region (point-min) (point-max))))
+	     (indent-region (region-beginning) (region-end))
+	   (indent-region (point-min) (point-max))))
   "Set default indentation command.")
 
 (use-package ig-edit
@@ -229,6 +286,8 @@
   (advice-add 'kill-region :before #'ig-kill-region-or-line))
 
 
+
+;; Built-in - dired
 ;; File management - common
 ;; Note that the space used in time style format is actually a Unicode
 ;; char U+2008 PUNCTUATION SPACE to overcome a bug
@@ -267,7 +326,6 @@
 (use-package ig-utils
   :bind (("C-x <f12>" . ig-save-buffers-kill-unconditionally)
 	 ("C-c C-r" . ig-find-alternative-file-with-sudo)
-	 ("C-z" . ig-isearch-word-at-point)
 	 ("C-<" . ig-goto-minibuffer))
   :init
   (add-hook 'find-file-hook 'ig-find-file-root-header-warning)
@@ -353,7 +411,6 @@
 	(expand-file-name ".persistent-scratch" volatile-dir))
   :config
   (persistent-scratch-setup-default))
-
 
 
 (provide 'ig-packages)

@@ -7,12 +7,6 @@
 
 ;;; Code:
 
-(bind-keys :map isearch-mode-map
-	   ("<up>" . isearch-ring-retreat)
-	   ("<down>" . isearch-ring-advance)
-	   ("<left>" . isearch-repeat-backward)
-	   ("<right>" . isearch-repeat-forward))
-
 ;; cycle through buffers with Ctrl-Tab (like Firefox)
 (bind-key "<C-tab>" 'bury-buffer)
 ;; toggle menu-bar visibility

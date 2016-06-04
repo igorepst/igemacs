@@ -53,28 +53,6 @@ This function is suitable to add to `find-file-hook'."
 
 
 
-;; Search for word at point
-(defun ig-isearch-word-at-point ()
-  "Search for word at point."
-  (interactive)
-  (let (start end)
-    (if mark-active
-        (progn
-          (setq start (region-beginning))
-          (setq end (region-end)))
-      (let ((exp "[:alnum:]-_") (orig (point)))
-        (setq start (+ orig (skip-chars-backward exp)))
-        (setq end (+ start (skip-chars-forward exp)))
-	(goto-char orig)))
-    (deactivate-mark)
-    ;; Exit previous search, if any
-    (let ((search-nonincremental-instead nil))
-      (isearch-exit))
-    (isearch-mode t)
-    (isearch-yank-string (buffer-substring-no-properties start end))))
-
-
-
 ;; Save `kill-ring' to history
 ;;;###autoload
 (defun ig-savehist-save-hook-func ()
