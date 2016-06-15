@@ -12,8 +12,7 @@
 
 
 (defconst ig-packages-install-list
-  '(
-    elisp-slime-nav
+  '(elisp-slime-nav
     form-feed
     persistent-scratch
     which-key
@@ -29,6 +28,13 @@
     magit
     buffer-move
     yasnippet
+    ;; ivy
+    ivy
+    swiper
+    counsel
+    ivy-hydra
+    smex
+    flx
     ;; org
     org-plus-contrib
     org-bullets
@@ -36,12 +42,6 @@
     use-package
     diminish
     bind-key
-    ;; helm
-    helm
-    helm-ag
-    helm-gtags
-    helm-pages
-    helm-cmd-t
     ;; company
     company
     company-quickhelp
@@ -49,8 +49,7 @@
     alect-themes
     rainbow-delimiters
     powerline
-    spaceline
-    )
+    spaceline)
   "List of packages that I like.")
 
 

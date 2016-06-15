@@ -105,7 +105,7 @@ Used with pandoc, but shouldn't hurt anyway."
   :defer t
   :config
   (setq org-capture-templates
-	(quote (("w" "Weblink" entry (file "~/org/bookmarks.org")
+	(quote (("w" "Weblink" entry (file (expand-file-name "bookmarks.org" ig-org-directory))
 		 "* %c\n  :PROPERTIES:\n  :CREATED: %U\n  :END:\n  - Quote:\n    %i" :unnarrowed)))))
 
 

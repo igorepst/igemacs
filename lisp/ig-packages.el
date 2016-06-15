@@ -7,23 +7,10 @@
 
 
 
-;; ig-helm
-(defvar ig-helm-open-command-map (make-sparse-keymap)
-  "Keymap for opening important files via `helm'.")
-(defvar ig-helm-open-command-prefix nil
-  "Prefix for `ig-helm-open-command-map'.")
-(define-prefix-command 'ig-helm-open-command-prefix)
-(fset 'ig-helm-open-command-prefix ig-helm-open-command-map)
-(setq ig-helm-open-command-prefix ig-helm-open-command-map)
+(defvar ig-org-directory (expand-file-name "org" (getenv "HOME"))
+  "`Org' directory.")
 
-(use-package ig-helm
-  :diminish helm-mode
-  :defer 0
-  :bind
-  (("C-c C-f" . ig-helm-open-command-prefix)
-   :map ig-helm-open-command-map
-   ("i" . ig-open-important-files)
-   ("o" . ig-open-org-files)))
+(use-package ig-ivy)
 
 
 
@@ -247,7 +234,7 @@
   :config
   (add-hook 'markdown-mode-hook
 	    (lambda () (setq-local ig-indent-command
-			      '(lambda () (error "Indenting Markdown is not supported")))))
+				   '(lambda () (error "Indenting Markdown is not supported")))))
   (when (executable-find "pandoc")
     ;; https://gist.github.com/fredRos/0e3a845de95ec654538f
     (setq markdown-command (concat "pandoc -c file://"
@@ -270,8 +257,8 @@
 ;; ig-edit
 (defvar ig-indent-command
   '(lambda () (if (region-active-p)
-	     (indent-region (region-beginning) (region-end))
-	   (indent-region (point-min) (point-max))))
+		  (indent-region (region-beginning) (region-end))
+		(indent-region (point-min) (point-max))))
   "Set default indentation command.")
 
 (use-package ig-edit
@@ -364,6 +351,7 @@
 
 
 (use-package magit
+  :defer t
   :init
   (setq vc-handled-backends (delq 'Git vc-handled-backends)))
 
