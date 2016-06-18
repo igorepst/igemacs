@@ -45,7 +45,6 @@
 
 (defun ig-counsel-ag-files-function (string &optional _pred &rest _unused)
   "Search for file names by ag with STRING."
-  (message "defdir %s" ig-counsel-ag-files-dir)
   (let ((default-directory ig-counsel-ag-files-dir))
     (split-string
      (shell-command-to-string
