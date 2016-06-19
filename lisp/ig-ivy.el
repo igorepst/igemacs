@@ -68,7 +68,8 @@ Argument UNRESTRICTED makes 'ag' to search all files."
   (ivy-read
    (funcall counsel-prompt-function "Ag for files")
    'ig-counsel-ag-files-function
-   :action #'ig-counsel-ag-files-action))
+   :action #'ig-counsel-ag-files-action
+   :caller 'ig-counsel-ag-files))
 
 
 (defvar ig-ivy-open-command-map (make-sparse-keymap)
@@ -85,6 +86,8 @@ Argument UNRESTRICTED makes 'ag' to search all files."
   (ivy-mode 1)
   :config
   (setq ivy-use-virtual-buffers t
+	ivy-height 10
+	ivy-count-format "(%d/%d) "
 	ivy-wrap t
 	ivy-re-builders-alist '((t . ivy--regex-fuzzy))
 	ivy-views '(("elisp-info [–]"
