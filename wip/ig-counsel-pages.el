@@ -28,12 +28,12 @@
 (defun ig-counsel-pages ()
   "Select buffer's pages via `counsel'."
   (interactive)
-  (ivy-read
-   (funcall counsel-prompt-function "Pages")
+  (ivy-read "Pages: "
    (ig-counsel-pages-function)
    :action (lambda (x)
 	     (goto-char x)
 	     (recenter-top-bottom 0))
+   :require-match t
    :caller 'ig-counsel-pages))
 
 

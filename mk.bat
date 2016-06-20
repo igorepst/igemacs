@@ -28,7 +28,7 @@ goto :eof
 
 :up
 git pull --rebase
-emacs -batch -Q -l init.el -f ig-update-all-autoloads -- --ig-profile-minimal
+emacs -batch -Q -l init.el -f ig-update-all-autoloads -- --ig-profile=minimal
 emacs -batch -Q -l init.el -- --ig-profile=update
 goto :eof
 

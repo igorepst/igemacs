@@ -65,10 +65,10 @@ Argument UNRESTRICTED makes 'ag' to search all files."
   (setq ig-counsel-ag-files-cmd
 	(if unrestricted "ag --vimgrep -u -i -g \"%s\""
 	  "ag --vimgrep -i -g \"%s\""))
-  (ivy-read
-   (funcall counsel-prompt-function "Ag for files")
+  (ivy-read "Ag for files: "
    'ig-counsel-ag-files-function
    :action #'ig-counsel-ag-files-action
+   :require-match t
    :caller 'ig-counsel-ag-files))
 
 

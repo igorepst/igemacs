@@ -16,7 +16,7 @@ up:
 	else \
 		echo 'Not inside git repository'; \
 	fi
-	$(emacs) -batch -Q -l init.el -f ig-update-all-autoloads -- --ig-profile-minimal 2>&1
+	$(emacs) -batch -Q -l init.el -f ig-update-all-autoloads -- --ig-profile=minimal 2>&1
 	$(emacs) -batch -Q -l init.el -- --ig-profile=update 2>&1
 
 run:
