@@ -38,6 +38,8 @@
     ;; org
     org-plus-contrib
     org-bullets
+    htmlize
+    ox-mediawiki
     ;; use-package
     use-package
     diminish

@@ -13,6 +13,7 @@
 
 ;; pp-macroexpand-last-sexp used to pretty-print macro expansion
 ;; https://github.com/jwiegley/use-package
+(setq use-package-enable-imenu-support t)
 (eval-when-compile
   (require 'use-package))
 (require 'diminish)
