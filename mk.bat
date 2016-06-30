@@ -30,6 +30,7 @@ goto :eof
 git pull --rebase
 emacs -batch -Q -l init.el -f ig-update-all-autoloads -- --ig-profile=minimal
 emacs -batch -Q -l init.el -- --ig-profile=update
+emacs -batch -Q -l init.el --eval="(progn(byte-compile-file \"init.el\" t)(byte-recompile-directory \"lisp\" 0))"
 goto :eof
 
 :min

@@ -18,6 +18,7 @@ up:
 	fi
 	$(emacs) -batch -Q -l init.el -f ig-update-all-autoloads -- --ig-profile=minimal 2>&1
 	$(emacs) -batch -Q -l init.el -- --ig-profile=update 2>&1
+	$(emacs) -batch -Q -l init.el --eval="(progn(byte-compile-file \"init.el\" t)(byte-recompile-directory \"lisp\" 0))"
 
 run:
 	$(emacs)
