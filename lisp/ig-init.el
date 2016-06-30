@@ -167,6 +167,8 @@ This functions should be added to the hooks of major modes for programming."
 		  (when (not (ig-sh-set-shell ig-bash-files "bash" buf-name))
 		    (ig-sh-set-shell ig-zsh-files "zsh" buf-name)))))))
 
+(add-to-list 'magic-mode-alist '("#Emacs: shell-script-mode" . shell-script-mode))
+
 
 
 (setq visual-line-fringe-indicators '(left-curly-arrow nil))
