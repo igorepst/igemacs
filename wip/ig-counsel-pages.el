@@ -21,8 +21,7 @@
   "Get page header and its position."
   (skip-chars-forward " \t\n")
   (let* ((start (point))
-	 (end (line-end-position))
-	 (substr (buffer-substring start end)))
+	 (substr (buffer-substring start (line-end-position))))
     (cons substr start)))
 
 (defun ig-counsel-pages ()
@@ -31,7 +30,7 @@
   (ivy-read "Pages: "
    (ig-counsel-pages-function)
    :action (lambda (x)
-	     (goto-char x)
+	     (goto-char (cdr x))
 	     (recenter-top-bottom 0))
    :require-match t
    :caller 'ig-counsel-pages))

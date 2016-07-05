@@ -17,8 +17,8 @@ up:
 		echo 'Not inside git repository'; \
 	fi
 	$(emacs) -batch -Q -l init.el -f ig-update-all-autoloads -- --ig-profile=minimal 2>&1
-	$(emacs) -batch -Q -l init.el -- --ig-profile=update 2>&1
-	$(emacs) -batch -Q -l init.el --eval="(progn(byte-compile-file \"init.el\" t)(byte-recompile-directory \"lisp\" 0))"
+	-$(emacs) -batch -Q -l init.el -- --ig-profile=update 2>&1 #"minus" to continue, even in case of error
+#	$(emacs) -batch -Q -l init.el --eval="(progn(byte-compile-file \"init.el\" t)(byte-recompile-directory \"lisp\" 0))"
 
 run:
 	$(emacs)
