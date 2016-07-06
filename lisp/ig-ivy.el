@@ -63,8 +63,8 @@ Argument UNRESTRICTED makes 'ag' to search all files."
 	(or (locate-dominating-file default-directory ".git")
 	    default-directory))
   (setq ig-counsel-ag-files-cmd
-	(if unrestricted "ag --vimgrep -u -i -g \"%s\""
-	  "ag --vimgrep -i -g \"%s\""))
+	(if unrestricted "ag --vimgrep --nocolor -u -i -g \"%s\""
+	  "ag --vimgrep --nocolor --hidden -i -g \"%s\""))
   (ivy-read "Ag for files: "
    'ig-counsel-ag-files-function
    :action #'ig-counsel-ag-files-action
