@@ -391,6 +391,18 @@
 
 
 
+;; https://github.com/flycheck/flycheck
+(use-package flycheck
+  :defer t
+  :init
+  ;; Depends on shellcheck
+  (add-hook 'sh-mode-hook 'flycheck-mode)
+  (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
+  :config
+  (flycheck-pos-tip-mode))
+
+
+
 ;; https://github.com/Fanael/persistent-scratch
 ;; Should be defined near the end to use other modes
 (use-package persistent-scratch

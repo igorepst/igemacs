@@ -28,6 +28,9 @@
     magit
     buffer-move
     yasnippet
+    ;; flycheck
+    flycheck
+    flycheck-pos-tip
     ;; ivy
     ivy
     swiper
