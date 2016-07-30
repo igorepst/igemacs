@@ -38,6 +38,7 @@
     ivy-hydra
     smex
     flx
+    ivy-pages
     ;; org
     org-plus-contrib
     org-bullets

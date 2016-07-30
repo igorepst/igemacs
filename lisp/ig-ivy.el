@@ -1,9 +1,9 @@
 ;;; ig-ivy.el --- Ivy configuration
 
-;;; Commentary
+;;; Commentary:
 ;; Configuration of Ivy and supplementary packages
 
-;;; Code
+;;; Code:
 
 ;; Requirement for counsel-M-x
 ;; https://github.com/nonsequitur/smex
@@ -36,7 +36,7 @@
 				  additional-lisp-dir))
 	      ("Main" . ,(expand-file-name "init.el" emacs-d))
 	      ("Readme" . ,(expand-file-name "README.md" emacs-d)))
-	    :action #'find-file))
+	    :action (lambda (x) (find-file (cdr x)))))
 
 (defvar ig-counsel-ag-files-dir nil
   "Directory to use in `ig-counsel-ag-files'.")
@@ -117,6 +117,11 @@ Argument UNRESTRICTED makes 'ag' to search all files."
    ("l" . counsel-load-library)
    :map read-expression-map
    ("C-r" . counsel-expression-history)))
+
+(use-package ivy-pages
+  :defer t
+  :bind
+  (("C-c p" . ivy-pages)))
 
 
 (provide 'ig-ivy)
