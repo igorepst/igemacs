@@ -63,7 +63,9 @@
   :config
   (setq custom-safe-themes t
 	;; enable alect-themes in 256-colors terminals
-	alect-display-class '((class color) (min-colors 256)))
+	alect-display-class '((class color) (min-colors 256))
+	alect-overriding-faces
+	'((tooltip ((t (:inherit variable-pitch :background bg+1 :foreground fg-1))))))
   (load-theme 'alect-dark t))
 
 (use-package ig-fonts
@@ -94,7 +96,9 @@
       save-interprogram-paste-before-kill t
       select-enable-clipboard t
       select-enable-primary t
-      x-select-enable-clipboard-manager nil)
+      x-select-enable-clipboard-manager nil
+      help-window-select t
+      x-gtk-use-system-tooltips nil)
 
 (recentf-mode 1)
 (global-hl-line-mode 1)
