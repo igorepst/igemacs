@@ -53,6 +53,7 @@
  (if (eq system-type 'windows-nt) 'utf-16-le 'utf-8))
 (prefer-coding-system 'utf-8)
 (setq system-time-locale "C")
+(modify-coding-system-alist 'file "\\.[nN][fF][oO]\\'" 'ibm437)
 
 
 

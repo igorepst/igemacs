@@ -88,7 +88,7 @@
 
 
 ;; Additional code
-(setq apropos-do-all t ;; search more extensively
+(setq apropos-do-all t ;; search more extensively, for ex., search for noninteractive f. too
       require-final-newline t
       sentence-end-double-space nil
       load-prefer-newer t
@@ -98,6 +98,7 @@
       select-enable-primary t
       x-select-enable-clipboard-manager nil
       help-window-select t
+      recenter-positions '(top middle bottom) ;; C-l (recenter-top-bottom starts from top)
       x-gtk-use-system-tooltips nil)
 
 (recentf-mode 1)
