@@ -1,7 +1,9 @@
-;;; ig-org.el --- Init org mode
+;;; ig-org.el --- Init Org mode
 
 ;;; Commentary:
-;;
+;; Configuration of Org
+
+;;; Code:
 
 (defun ig-setup-org-headings(frame)
   "Make org headers larger, instead of different colors, on graphical displays only."

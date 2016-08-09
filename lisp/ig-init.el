@@ -92,14 +92,14 @@
       require-final-newline t
       sentence-end-double-space nil
       load-prefer-newer t
-      ediff-window-setup-function 'ediff-setup-windows-plain
       save-interprogram-paste-before-kill t
       select-enable-clipboard t
       select-enable-primary t
       x-select-enable-clipboard-manager nil
       help-window-select t
       recenter-positions '(top middle bottom) ;; C-l (recenter-top-bottom starts from top)
-      x-gtk-use-system-tooltips nil)
+      x-gtk-use-system-tooltips nil
+      use-dialog-box nil)
 
 (recentf-mode 1)
 (global-hl-line-mode 1)

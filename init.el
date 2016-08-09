@@ -10,7 +10,7 @@
 
 ;; Faster start by disabling special processing temporarily,
 ;; especially useful on Cygwin
-(setq ig-file-name-handler-alist file-name-handler-alist)
+(defvar ig-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist '())
 
 (defconst emacs-d
@@ -87,8 +87,11 @@ to prevent Emacs from complaining about 'Unknown option'."
 
 ;; Use `pcase' to switch by strings, using `equal'
 (pcase (ig-get-profile-arg-value "--ig-profile=")
-  ("update" (require 'ig-install-packages))
-  ("minimal" (princ "Minimal configuration was loaded"))
+  ("update"
+   (require 'ig-install-packages)
+   (ig-packages-manage))
+  ("minimal"
+   (princ "Minimal configuration was loaded\n"))
   ("profiler"
    (require 'profiler)
    (profiler-start 'cpu+mem)

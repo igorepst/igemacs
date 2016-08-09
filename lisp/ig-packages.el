@@ -175,10 +175,11 @@
 
 
 
-;; Built in - windmove
-(use-package windmove
+;; Built in - ediff
+(use-package ediff
+  :defer t
   :config
-  (setq windmove-wrap-around t))
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain))
 
 
 
