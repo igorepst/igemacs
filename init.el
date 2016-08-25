@@ -14,7 +14,7 @@
 (setq file-name-handler-alist '())
 
 (defconst emacs-d
-  ;; load-file-name may be null if using 'esup' start up profiler, for ex.
+  ;; `load-file-name' may be null if using `esup' start up profiler, for ex.
   (file-truename
    (if load-file-name
        (file-name-directory load-file-name) user-emacs-directory))
@@ -38,6 +38,9 @@
 (require 'ig-volatile)
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+;; Disable potentially slow hook
+(remove-hook 'find-file-hooks 'vc-refresh-state)
 
 
 

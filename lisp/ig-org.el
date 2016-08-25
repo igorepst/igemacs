@@ -106,9 +106,12 @@ Used with pandoc, but shouldn't hurt anyway."
 (use-package org-protocol
   :defer t
   :config
+  (use-package org-protocol-capture-html)
   (setq org-capture-templates
 	(quote (("w" "Weblink" entry (file (expand-file-name "bookmarks.org" ig-org-directory))
-		 "* %c\n  :PROPERTIES:\n  :CREATED: %U\n  :END:\n  - Quote:\n    %i" :unnarrowed)))))
+		 "* %c\n  :PROPERTIES:\n  :CREATED: %U\n  :END:\n  - Quote:\n    %i" :unnarrowed)
+		("o" "Web site" entry (file "")
+		 "* %a :website:\n\n%U %?\n\n%:initial")))))
 
 
 

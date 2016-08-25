@@ -66,10 +66,10 @@ Argument UNRESTRICTED makes 'ag' to search all files."
 	(if unrestricted "ag --vimgrep --nocolor -u -i -g \"%s\""
 	  "ag --vimgrep --nocolor --hidden -i -g \"%s\""))
   (ivy-read "Ag for files: "
-   'ig-counsel-ag-files-function
-   :action #'ig-counsel-ag-files-action
-   :require-match t
-   :caller 'ig-counsel-ag-files))
+	    'ig-counsel-ag-files-function
+	    :action #'ig-counsel-ag-files-action
+	    :require-match t
+	    :caller 'ig-counsel-ag-files))
 
 
 (defvar ig-ivy-open-command-map (make-sparse-keymap)
@@ -89,7 +89,9 @@ Argument UNRESTRICTED makes 'ag' to search all files."
 	ivy-height 10
 	ivy-count-format "(%d/%d) "
 	ivy-wrap t
-	ivy-re-builders-alist '((t . ivy--regex-fuzzy))
+	ivy-re-builders-alist
+	'((swiper . ivy--regex-plus)
+	  (t . ivy--regex-fuzzy))
 	ivy-views '(("elisp-info [–]"
 		     (horz
 		      (sexp (info "(elisp)Top"))
