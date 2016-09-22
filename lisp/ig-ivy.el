@@ -120,6 +120,11 @@ Argument UNRESTRICTED makes 'ag' to search all files."
    :map read-expression-map
    ("C-r" . counsel-expression-history)))
 
+(use-package counsel
+  :diminish ""
+  :config
+  (setq counsel-ag-base-command "ag --vimgrep --nocolor --nogroup %s"))
+
 (use-package ivy-pages
   :defer t
   :bind
