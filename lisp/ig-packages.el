@@ -58,18 +58,6 @@
 
 
 
-;; https://github.com/purcell/elisp-slime-nav
-(use-package elisp-slime-nav
-  :diminish ""
-  :init
-  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
-    (add-hook hook 'turn-on-elisp-slime-nav-mode))
-  :bind
-  (:map elisp-slime-nav-mode-map
-	("M-z" . elisp-slime-nav-describe-elisp-thing-at-point)))
-
-
-
 ;; https://github.com/Fanael/rainbow-delimiters
 (use-package rainbow-delimiters
   :init (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
@@ -81,7 +69,7 @@
   :defer t
   :diminish ""
   :bind
-  (("C-." . company-complete)
+  (("C->" . company-complete)
    :map company-active-map
    ("C-n" . company-select-next)
    ("C-d" . company-show-doc-buffer)
@@ -269,7 +257,8 @@
 	 ("C-+" . ig-font-inc)
 	 ("C--" . ig-font-dec)
 	 ("C-0" . ig-font-restore)
-	 ("C-M-\\" . ig-indent-region-or-buffer))
+	 ("C-M-\\" . ig-indent-region-or-buffer)
+	 ("M-z" . ig-describe-symbol))
   :init
   (advice-add 'kill-region :before #'ig-kill-region-or-line))
 
@@ -288,7 +277,7 @@
 (use-package dired
   :config
   (setq dired-recursive-copies 'always
-	dired-recursive-deletes 'top
+	dired-recursive-deletes 'always
 	dired-dwim-target t
 	dired-listing-switches (purecopy ig-ls-switches)
 	;; We MUST now override the following regexp.
@@ -307,7 +296,8 @@
    :map dired-mode-map
    ("<RET>" . dired-find-alternate-file)
    ("^" . ig-dired-open-parent)
-   ("<left>" . ig-dired-open-parent)))
+   ("<left>" . ig-dired-open-parent)
+   ("<right>" . dired-find-alternate-file)))
 
 
 

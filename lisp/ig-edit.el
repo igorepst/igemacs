@@ -148,7 +148,7 @@ Argument ARG scale."
 ;;;###autoload
 (defun ig-delete-non-matching-lines (regexp)
   "Keep only lines matching REGEXP in region or buffer."
-  (interactive "*MKeep lines containing match for regexp: ")
+  (interactive "*mkeep lines containing match for regexp: ")
   (let ((bounds (ig-get-bounds-lines-rect t)))
     (keep-lines regexp (car bounds) (cdr bounds) t)))
 
@@ -162,7 +162,7 @@ Argument ARG scale."
 ;;;###autoload
 (defun ig-sort-lines (&optional reverse)
   "Sort lines in region or buffer.
-Optional argument REVERSE whether to reverse the sort."
+Optional argument REVERSE - whether to reverse the sort."
   (interactive "*")
   (let ((bounds (ig-get-bounds-lines-rect t)))
     (sort-lines reverse (car bounds) (cdr bounds))))
@@ -174,6 +174,13 @@ Optional argument REVERSE whether to reverse the sort."
   (let ((bounds (ig-get-bounds-lines-rect t)))
     (reverse-region (car bounds) (cdr bounds))))
 
+
+
+(defun ig-describe-symbol ()
+  "Describe symbol at point."
+  (interactive)
+  (let ((thing (symbol-at-point)))
+    (if thing (describe-symbol thing) (call-interactively #'describe-symbol))))
 
 (provide 'ig-edit)
 
