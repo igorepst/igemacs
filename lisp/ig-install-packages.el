@@ -12,8 +12,7 @@
 
 
 (defvar ig-packages-req-list
-  '(elisp-slime-nav
-    form-feed
+  '(form-feed
     persistent-scratch
     which-key
     window-numbering
