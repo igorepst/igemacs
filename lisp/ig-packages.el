@@ -111,7 +111,6 @@
 	which-key-side-window-location 'bottom
 	which-key-side-window-max-height 0.5
 	which-key-use-C-h-commands t
-	which-key-prevent-C-h-from-cycling nil
 	which-key-special-keys nil
 	which-key-show-prefix 'left
 	which-key-show-remaining-keys nil)
@@ -173,6 +172,7 @@
 
 ;; https://github.com/dominikh/go-mode.el
 (use-package go-mode
+  :defer t
   :config
   (when (executable-find "go")
     (add-hook 'go-mode-hook
@@ -199,6 +199,7 @@
 
 ;; https://github.com/joshwnj/json-mode
 (use-package json-mode
+  :defer t
   :config
   (add-hook 'json-mode-hook
 	    (lambda () (setq-local ig-indent-command 'json-mode-beautify))))
@@ -279,6 +280,7 @@
   (setq dired-recursive-copies 'always
 	dired-recursive-deletes 'always
 	dired-dwim-target t
+	dired-use-ls-dired t
 	dired-listing-switches (purecopy ig-ls-switches)
 	;; We MUST now override the following regexp.
 	;; There is a regular space in its end
@@ -288,16 +290,17 @@
   (defun ig-dired-home-dir ()
     (interactive)
     (dired (getenv "HOME")))
-  (defun ig-dired-open-parent ()
-    (interactive)
-    (find-alternate-file ".."))
+  ;; (defun ig-dired-open-parent ()
+  ;;   (interactive)
+  ;;   (find-alternate-file ".."))
   :bind
   (("S-<f1>" . ig-dired-home-dir)
-   :map dired-mode-map
-   ("<RET>" . dired-find-alternate-file)
-   ("^" . ig-dired-open-parent)
-   ("<left>" . ig-dired-open-parent)
-   ("<right>" . dired-find-alternate-file)))
+   ;; :map dired-mode-map
+   ;; ("<RET>" . dired-find-alternate-file)
+   ;; ("^" . ig-dired-open-parent)
+   ;; ("<left>" . ig-dired-open-parent)
+   ;; ("<right>" . dired-find-alternate-file)
+   ))
 
 
 

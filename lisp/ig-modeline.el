@@ -23,25 +23,6 @@
 
 
 
-;; https://github.com/syohex/emacs-anzu
-(use-package anzu
-  :diminish ""
-  :init
-  (global-anzu-mode 1)
-  :config
-  (setq anzu-deactivate-region t
- 	anzu-search-threshold 1000
-	anzu-replace-to-string-separator " => "
-	;; Handled by `spaceline'
-	anzu-cons-mode-line-p nil)
-  :bind (([remap query-replace] . anzu-query-replace) ;"M-%"
-	 ([remap query-replace-regexp] . anzu-query-replace-regexp) ;"C-M-%"
-	 :map isearch-mode-map
-	 ([remap isearch-query-replace] . anzu-isearch-query-replace)
-	 ([remap isearch-query-replace-regexp] . anzu-isearch-query-replace-regexp)))
-
-
-
 ;; https://github.com/milkypostman/powerline
 (use-package powerline
   :config

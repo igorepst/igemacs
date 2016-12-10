@@ -91,6 +91,7 @@ Argument UNRESTRICTED makes 'ag' to search all files."
 	ivy-wrap t
 	ivy-re-builders-alist
 	'((swiper . ivy--regex-plus)
+	  (counsel-git-grep . ivy--regex-plus)
 	  (t . ivy--regex-fuzzy))
 	ivy-views '(("elisp-info [–]"
 		     (horz

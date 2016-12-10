@@ -16,7 +16,6 @@
     persistent-scratch
     which-key
     window-numbering
-    anzu
     hydra
     drag-stuff
     xahk-mode

@@ -30,6 +30,9 @@
       inhibit-startup-echo-area-message t
       initial-major-mode 'emacs-lisp-mode)
 
+(setq enable-recursive-minibuffers t)
+(minibuffer-depth-indicate-mode t)
+
 (setq-default indicate-empty-lines t)
 
 (transient-mark-mode 1)
