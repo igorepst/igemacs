@@ -141,6 +141,16 @@ This functions should be added to the hooks of major modes for programming."
 
 (add-hook 'prog-mode-hook 'font-lock-comment-annotations)
 
+(defun ig-font-lock-log-file ()
+  "Highlight severity keywords in log files."
+  (font-lock-add-keywords nil '(("\\<\\(ERROR\\|FATAL\\)\\>" 1 font-lock-warning-face t)))
+  (font-lock-add-keywords nil '(("\\<\\(WARN\\)\\>" 1 font-lock-keyword-face t)))
+  (font-lock-add-keywords nil '(("\\<\\(INFO\\)\\>" 1 font-lock-function-name-face t)))
+  (font-lock-add-keywords nil '(("\\<\\(DEBUG\\|TRACE\\)\\>" 1 font-lock-constant-face t))))
+
+(add-to-list 'auto-mode-alist
+             '("\\.[Ll][Oo][Gg]\\'" . (lambda () (ig-font-lock-log-file))))
+
 
 
 ;; Bash & zsh
