@@ -174,8 +174,7 @@ This functions should be added to the hooks of major modes for programming."
   "Loop on NAMES to set SHELL-NAME, comparing to BUF-NAME."
   (dolist (name names)
     (when (string= buf-name name)
-      (sh-set-shell shell-name)
-      (return t))))
+      (sh-set-shell shell-name) t)))
 
 (add-hook 'sh-mode-hook
           (lambda ()

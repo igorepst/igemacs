@@ -31,6 +31,22 @@ _k_: keep        _r_: reverse sort     _SPC_: quit
 
 
 
+(defhydra ig-hydra-dired-sort (:hint nil : color pink)
+  "
+Sort dired by:
+_n_: none         _s_: size      _r_: recursive
+_v_: version      _t_: time      _SPC_: quit
+"
+  ("n" (ig-dired-sort "none"))
+  ("v" (ig-dired-sort "version"))
+  ("s" (ig-dired-sort "size"))
+  ("t" (ig-dired-sort "time"))
+  ;;TODO
+  ("r" (message "Not implemented yet"))
+  ("SPC" nil))
+
+
+
 (defhydra ig-hydra-windows (:color pink
 				   :hint nil)
   "

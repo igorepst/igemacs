@@ -31,6 +31,7 @@
     flycheck-pos-tip
     ;; ivy
     ivy
+    ivy-rich
     swiper
     counsel
     ivy-hydra

@@ -122,6 +122,7 @@
 
 ;; https://github.com/abo-abo/hydra
 (use-package ig-hydra
+  :commands (ig-hydra-dired-sort/body)
   :bind
   (("C-c f" . ig-hydra-matching-lines/body)
    ("C-x SPC" . hydra-rectangle/body)
@@ -224,7 +225,7 @@
   :config
   (add-hook 'markdown-mode-hook
 	    (lambda () (setq-local ig-indent-command
-				   '(lambda () (error "Indenting Markdown is not supported")))))
+			      '(lambda () (error "Indenting Markdown is not supported")))))
   (when (executable-find "pandoc")
     ;; https://gist.github.com/fredRos/0e3a845de95ec654538f
     (setq markdown-command (concat "pandoc -c file://"
@@ -247,8 +248,8 @@
 ;; ig-edit
 (defvar ig-indent-command
   '(lambda () (if (region-active-p)
-		  (indent-region (region-beginning) (region-end))
-		(indent-region (point-min) (point-max))))
+	     (indent-region (region-beginning) (region-end))
+	   (indent-region (point-min) (point-max))))
   "Set default indentation command.")
 
 (use-package ig-edit
@@ -273,7 +274,18 @@
 (defconst ig-time-style-space (string ?\u2008) "Punctuation space Unicode char.")
 (defconst ig-ls-switches (concat
 			  "--group-directories-first --time-style=+%d/%m/%y"
-			  ig-time-style-space "%R -AhFlv") "'ls' switches.")
+			  ig-time-style-space "%R -AhFl") "'ls' switches.")
+
+;;;###autoload
+(defun ig-dired-sort (variant &optional reverse)
+  "Sort dired by VARIANT, possibly in REVERSE order.
+The sorting mode will be used from now on."
+  (let ((switches (concat (purecopy ig-ls-switches) " --sort=" variant)))
+    (when reverse (setq switches (concat switches " --recursive")))
+    (setq dired-listing-switches switches)
+    (when (string= "dired" (ig-buffer-mode (current-buffer)))
+      (message "switches are %S" switches)
+      (dired-sort-other switches))))
 
 (use-package dired
   :config
@@ -281,12 +293,13 @@
 	dired-recursive-deletes 'always
 	dired-dwim-target t
 	dired-use-ls-dired t
-	dired-listing-switches (purecopy ig-ls-switches)
+	;; dired-listing-switches (purecopy ig-ls-switches)
 	;; We MUST now override the following regexp.
 	;; There is a regular space in its end
 	directory-listing-before-filename-regexp
 	(purecopy (concat "\\([0-2][0-9]:[0-5][0-9] \\)\\|"
 			  directory-listing-before-filename-regexp)))
+  (ig-dired-sort "version")
   (defun ig-dired-home-dir ()
     (interactive)
     (dired (getenv "HOME")))
@@ -295,7 +308,8 @@
   ;;   (find-alternate-file ".."))
   :bind
   (("S-<f1>" . ig-dired-home-dir)
-   ;; :map dired-mode-map
+   :map dired-mode-map
+   ("|" . ig-hydra-dired-sort/body)
    ;; ("<RET>" . dired-find-alternate-file)
    ;; ("^" . ig-dired-open-parent)
    ;; ("<left>" . ig-dired-open-parent)

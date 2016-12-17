@@ -97,6 +97,10 @@ Argument UNRESTRICTED makes 'ag' to search all files."
 		     (horz
 		      (sexp (info "(elisp)Top"))
 		      (sexp (find-file (expand-file-name "elisp.org" ig-org-directory)))))))
+  (use-package ivy-rich
+    :diminish ""
+    :init
+    (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
   :bind
   (("C-s" . swiper)
    ("C-c C-r" . ivy-resume)
