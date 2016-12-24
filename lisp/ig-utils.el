@@ -68,6 +68,14 @@ This function is suitable to add to `find-file-hook'."
     (when miniw (select-window miniw))))
 
 
+
+
+(defun ig-kill-this-buffer (arg)
+  "Kill current buffer, prompt with ARG."
+  (interactive "P")
+  (if arg (call-interactively #'kill-buffer)
+    (kill-buffer nil)))
+
 (provide 'ig-utils)
 
 ;;; ig-utils.el ends here

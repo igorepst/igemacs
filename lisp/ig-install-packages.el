@@ -26,6 +26,7 @@
     magit
     buffer-move
     yasnippet
+    highlight-indent-guides
     ;; flycheck
     flycheck
     flycheck-pos-tip

@@ -102,7 +102,8 @@
       help-window-select t
       recenter-positions '(top middle bottom) ;; C-l (recenter-top-bottom starts from top)
       x-gtk-use-system-tooltips nil
-      use-dialog-box nil)
+      use-dialog-box nil
+      echo-keystrokes 0.01)
 
 (recentf-mode 1)
 (global-hl-line-mode 1)

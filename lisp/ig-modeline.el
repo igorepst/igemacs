@@ -66,10 +66,6 @@
 (add-hook 'lisp-interaction-mode-hook (lambda () (setq mode-name "LI")))
 (add-hook 'emacs-lisp-mode-hook (lambda () (setq mode-name "EL")))
 (add-hook 'eshell-mode-hook (lambda () (setq mode-name "Esh")))
-(add-hook 'dired-mode-hook (lambda () (setq mode-name "Dir")))
-;(add-hook 'ranger-mode-hook (lambda () (setq mode-name "Ranger")))
-;(add-hook 'markdown-mode-hook (lambda () (when (string= (ig-buffer-mode (current-buffer)) "markdown-mode")
-;				      (setq mode-name "MD"))))
 (add-hook 'isearch-mode-hook  (lambda () (diminish 'isearch-mode)))
 ;(setq projectile-mode-line '(:eval (if (condition-case nil
 ;                                          (and projectile-require-project-root

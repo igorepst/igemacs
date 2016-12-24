@@ -31,18 +31,20 @@ _k_: keep        _r_: reverse sort     _SPC_: quit
 
 
 
-(defhydra ig-hydra-dired-sort (:hint nil : color pink)
+(defvar ig-dired-sort-reverse-p nil)
+(defhydra ig-hydra-dired-sort (:hint nil :color blue
+				     :body-pre (setq ig-dired-sort-reverse-p nil))
   "
 Sort dired by:
-_n_: none         _s_: size      _r_: recursive
-_v_: version      _t_: time      _SPC_: quit
+_n_: name         _t_: time
+_s_: size         _r_: reverse
+_e_: extension    _SPC_: quit
 "
-  ("n" (ig-dired-sort "none"))
-  ("v" (ig-dired-sort "version"))
-  ("s" (ig-dired-sort "size"))
-  ("t" (ig-dired-sort "time"))
-  ;;TODO
-  ("r" (message "Not implemented yet"))
+  ("n" (ig-dired-sort "-v" ig-dired-sort-reverse-p))
+  ("s" (ig-dired-sort "-S" ig-dired-sort-reverse-p))
+  ("e" (ig-dired-sort "-X" ig-dired-sort-reverse-p))
+  ("t" (ig-dired-sort "-t" ig-dired-sort-reverse-p))
+  ("r" (setq ig-dired-sort-reverse-p t) :color pink)
   ("SPC" nil))
 
 

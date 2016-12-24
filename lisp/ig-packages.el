@@ -267,61 +267,15 @@
 
 
 ;; Built-in - dired
-;; File management - common
-;; Note that the space used in time style format is actually a Unicode
-;; char U+2008 PUNCTUATION SPACE to overcome a bug
-;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=18875
-(defconst ig-time-style-space (string ?\u2008) "Punctuation space Unicode char.")
-(defconst ig-ls-switches (concat
-			  "--group-directories-first --time-style=+%d/%m/%y"
-			  ig-time-style-space "%R -AhFl") "'ls' switches.")
-
-;;;###autoload
-(defun ig-dired-sort (variant &optional reverse)
-  "Sort dired by VARIANT, possibly in REVERSE order.
-The sorting mode will be used from now on."
-  (let ((switches (concat (purecopy ig-ls-switches) " --sort=" variant)))
-    (when reverse (setq switches (concat switches " --recursive")))
-    (setq dired-listing-switches switches)
-    (when (string= "dired" (ig-buffer-mode (current-buffer)))
-      (message "switches are %S" switches)
-      (dired-sort-other switches))))
-
-(use-package dired
-  :config
-  (setq dired-recursive-copies 'always
-	dired-recursive-deletes 'always
-	dired-dwim-target t
-	dired-use-ls-dired t
-	;; dired-listing-switches (purecopy ig-ls-switches)
-	;; We MUST now override the following regexp.
-	;; There is a regular space in its end
-	directory-listing-before-filename-regexp
-	(purecopy (concat "\\([0-2][0-9]:[0-5][0-9] \\)\\|"
-			  directory-listing-before-filename-regexp)))
-  (ig-dired-sort "version")
-  (defun ig-dired-home-dir ()
-    (interactive)
-    (dired (getenv "HOME")))
-  ;; (defun ig-dired-open-parent ()
-  ;;   (interactive)
-  ;;   (find-alternate-file ".."))
-  :bind
-  (("S-<f1>" . ig-dired-home-dir)
-   :map dired-mode-map
-   ("|" . ig-hydra-dired-sort/body)
-   ;; ("<RET>" . dired-find-alternate-file)
-   ;; ("^" . ig-dired-open-parent)
-   ;; ("<left>" . ig-dired-open-parent)
-   ;; ("<right>" . dired-find-alternate-file)
-   ))
+(use-package ig-dired)
 
 
 
 (use-package ig-utils
   :bind (("C-x <f12>" . ig-save-buffers-kill-unconditionally)
 	 ("C-c C-r" . ig-find-alternative-file-with-sudo)
-	 ("C-<" . ig-goto-minibuffer))
+	 ("C-<" . ig-goto-minibuffer)
+	 ("C-x k" . ig-kill-this-buffer))
   :init
   (add-hook 'find-file-hook 'ig-find-file-root-header-warning)
   (add-hook 'dired-mode-hook 'ig-find-file-root-header-warning)
@@ -334,6 +288,7 @@ The sorting mode will be used from now on."
   :diminish drag-stuff-mode
   :config
   (add-to-list 'drag-stuff-except-modes 'org-mode)
+  (drag-stuff-define-keys)
   (drag-stuff-global-mode t))
 
 
@@ -408,6 +363,18 @@ The sorting mode will be used from now on."
   (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
   :config
   (flycheck-pos-tip-mode))
+
+
+
+;; https://github.com/DarthFennec/highlight-indent-guides
+(use-package highlight-indent-guides
+  :defer t
+  :init
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+  :config
+  (setq highlight-indent-guides-character ?\|
+	highlight-indent-guides-method 'character)
+  (set-face-foreground 'highlight-indent-guides-character-face "darkgray"))
 
 
 

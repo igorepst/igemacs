@@ -105,14 +105,6 @@ Argument ARG scale."
 
 
 
-;; Get major mode
-;;;###autoload
-(defun ig-buffer-mode (buffer)
-  "Get the major mode of the BUFFER."
-  (buffer-local-value 'major-mode (get-buffer buffer)))
-
-
-
 ;; Indent region or buffer
 (defun ig-indent-region-or-buffer ()
   "Indent a selected region or a buffer."
