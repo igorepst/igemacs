@@ -44,6 +44,8 @@
     org-bullets
     htmlize
     ox-mediawiki
+    ;; dired
+    dired-rainbow
     ;; use-package
     use-package
     diminish

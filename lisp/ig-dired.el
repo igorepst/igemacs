@@ -23,13 +23,40 @@ The sorting mode will be used from now on."
     (when (eq major-mode 'dired-mode)
       (dired-sort-other switches))))
 
+(use-package dired-rainbow
+  :defer t
+  :config
+  (defconst ig-images-files-extensions
+    '("bmp" "jpg" "jpeg" "png" "gif" "tif" "tiff" "psd" "psp" "wmf" "emf" "ppm" "pgm" "pbm" "pnm" "svg" "ai" "eps" "ico")
+    "Images files.")
+  (defconst ig-archives-files-extensions
+    '("rar" "zip" "7z" "sqx" "gz" "tgz" "tar" "ace" "arj" "lha" "uc2" "lzma" "bz2" "z" "uc2")
+    "Archives files.")
+  (defconst ig-exec-files-extensions
+    '("exe" "com" "jar" "bat" "cmd" "ahk" "btm" "vbs" "vbe" "js" "jse" "wsf" "wsh" "msi")
+    "Executable files.")
+  (defconst ig-docs-files-extensions
+    '("doc" "docx" "odt" "xls" "xlsx" "ods" "pdf" "djvu")
+    "Document files.")
+  (defconst ig-media-files-extensions
+    '("avi" "vob" "mpg" "mpeg" "mkv" "mp4" "wmv" "webm" "flv" "ogv" "ogm" "divx" "m2v" "h264" "aac" "flac" "mp3" "wma" "mp4" "m4a" "mpa" "wav" "mid" "ac3" "mka" "cda")
+    "Media files.")
+  (setq dired-rainbow-date-regexp (concat "\\(?:[0-3][0-9]/[0-1][0-9]/[0-9][0-9]" ig-time-style-space "[0-2][0-9]:[0-5][0-9]\\)"))
+  (dired-rainbow-define ig-media-files-extensions "#6fb7d8" ig-media-files-extensions)
+  (dired-rainbow-define ig-images-files-extensions "#9397b7" ig-images-files-extensions)
+  (dired-rainbow-define ig-archives-files-extensions "#9fb696" ig-archives-files-extensions)
+  (dired-rainbow-define ig-docs-files-extensions "#21a184" ig-docs-files-extensions)
+  (dired-rainbow-define ig-exec-files-extensions "#d787a5" ig-exec-files-extensions)
+  (dired-rainbow-define-chmod ig-exec-files-chmod "#d787a5" "-.*x.*")
+  (dired-rainbow-define-chmod ig-dirs-chmod "#00aef4" "d"))
+
 (use-package dired
+  :defer t
   :config
   (setq dired-recursive-copies 'always
 	dired-recursive-deletes 'always
 	dired-dwim-target t
 	dired-use-ls-dired t
-	;; dired-listing-switches (purecopy ig-ls-switches)
 	;; We MUST now override the following regexp.
 	;; There is a regular space in its end
 	directory-listing-before-filename-regexp
@@ -64,6 +91,9 @@ The sorting mode will be used from now on."
   ;; (defun ig-dired-open-parent ()
   ;;   (interactive)
   ;;   (find-alternate-file ".."))
+
+  (require 'dired-rainbow)
+
   :bind
   (("S-<f1>" . ig-dired-home-dir)
    :map dired-mode-map
@@ -77,3 +107,7 @@ The sorting mode will be used from now on."
 (provide 'ig-dired)
 
 ;;; ig-dired.el ends here
+
+;; Local Variables:
+;; flycheck-disabled-checkers: (emacs-lisp emacs-lisp-checkdoc)
+;; End:
