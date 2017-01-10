@@ -100,6 +100,9 @@ Argument UNRESTRICTED makes 'ag' to search all files."
   (use-package ivy-rich
     :diminish ""
     :init
+    (setq ivy-virtual-abbreviate 'full
+	  ivy-rich-switch-buffer-align-virtual-buffer t
+	  ivy-rich-switch-buffer-delimiter "|")
     (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
   :bind
   (("C-s" . swiper)

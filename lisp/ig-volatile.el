@@ -12,6 +12,7 @@
   (make-directory volatile-dir t))
 
 (setq recentf-save-file (expand-file-name ".recentf" volatile-dir)
+      bookmark-default-file (expand-file-name "bookmark" volatile-dir)
       auto-save-list-file-prefix (expand-file-name ".saves-" volatile-dir)
       savehist-file (expand-file-name "savehist" volatile-dir)
       tramp-persistency-file-name (expand-file-name "tramp" volatile-dir)
