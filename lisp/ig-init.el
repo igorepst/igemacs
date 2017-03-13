@@ -118,7 +118,7 @@
       savehist-additional-variables
       '(search-ring regexp-search-ring extended-command-history
 		    kill-ring shell-command-history
-		    read-expression-history))
+		    read-expression-history file-name-history))
 (savehist-mode 1)
 
 (delete-selection-mode 1)

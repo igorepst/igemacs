@@ -87,7 +87,9 @@
 	company-tooltip-limit 20
 	company-tooltip-flip-when-above t
 	company-dabbrev-downcase nil
-	company-transformers '(company-sort-by-occurrence))
+	company-transformers '(company-sort-by-occurrence)
+	completion-ignore-case t
+	pcomplete-ignore-case t)
   (use-package company-quickhelp
     :config
     (setq company-quickhelp-delay 0.1)
@@ -375,6 +377,15 @@
   (setq highlight-indent-guides-character ?\|
 	highlight-indent-guides-method 'character)
   (set-face-foreground 'highlight-indent-guides-character-face "darkgray"))
+
+
+
+;; Built in - tramp
+(use-package tramp
+  :defer t
+  :config
+  ;; Enable overriding the history, disabling writing of it to not pollute the remote host with .tramp_history
+  (setq tramp-histfile-override t))
 
 
 
