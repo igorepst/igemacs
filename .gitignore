@@ -5,7 +5,7 @@ loaddefs.el
 *~
 auto-save-list/**
 elpa/**
-volatile/**
+.volatile/**
 \#*#
 session.*
 projectile-bookmarks.eld

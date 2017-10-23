@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 ;;; init.el --- The main entry point of igemacs
 
 ;;; Commentary:
@@ -8,71 +9,6 @@
 
 ;;; Code:
 
-;; Faster start by disabling special processing temporarily,
-;; especially useful on Cygwin
-(defvar ig-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist '())
-
-(defconst emacs-d
-  ;; `load-file-name' may be null if using `esup' start up profiler, for ex.
-  (file-truename
-   (if load-file-name
-       (file-name-directory load-file-name) user-emacs-directory))
-  "Base config directory.")
-
-(setq gc-cons-threshold (* 40 1024 1024))
-
-(eval-when-compile
-  (require 'cl))
-
-(setq backup-inhibited 1)
-
-(defconst additional-lisp-dir (expand-file-name "lisp" emacs-d))
-(add-to-list 'load-path additional-lisp-dir)
-(let ((default-directory additional-lisp-dir))
-  (normal-top-level-add-subdirs-to-load-path))
-
-;; Work in progress
-(add-to-list 'load-path (expand-file-name "wip" emacs-d))
-
-(require 'ig-volatile)
-
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-;; Disable potentially slow hook
-(remove-hook 'find-file-hooks 'vc-refresh-state)
-
-
-
-;; use UTF-8 everywhere by default
-(set-language-environment 'utf-8)
-(setq locale-coding-system 'utf-8
-      ;; disable CJK coding/encoding (Chinese/Japanese/Korean characters)
-      utf-translate-cjk-mode nil)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-;; use default utf-16-le to not alter the clipboard on Windows
-(set-selection-coding-system
- (if (eq system-type 'windows-nt) 'utf-16-le 'utf-8))
-(prefer-coding-system 'utf-8)
-(setq system-time-locale "C")
-(modify-coding-system-alist 'file "\\.[nN][fF][oO]\\'" 'ibm437)
-
-
-
-(defconst package-archives-protocol
-  (if (string= system-type `windows-nt) "http://" "https://")
-  "More often than not GnuTLS doesn't work properly on Windows.")
-(setq package-archives
-      `(("melpa" . ,(concat package-archives-protocol "melpa.org/packages/"))
-	("org" . "http://orgmode.org/elpa/")
-        ("gnu" . ,(concat package-archives-protocol "elpa.gnu.org/packages/"))))
-(setq package-user-dir
-      (expand-file-name "elpa" emacs-d))
-(package-initialize)
-(setq package-enable-at-startup nil)
-
-
 
 ;; Profiles and command line arguments
 (defun ig-get-profile-arg-value (ig-cmd-arg)
@@ -82,31 +18,85 @@ behaviour, before this file is fully evaluated, or in
 cases, where the argument is not present.  As a consequence,
 this argument should be added after 'empty' argument ('--')
 to prevent Emacs from complaining about 'Unknown option'."
-  (dolist (arg command-line-args)
-    (when (string-prefix-p ig-cmd-arg arg)
-      ;; Delete the argument to prevent Emacs from creating a file
-      (setq command-line-args (delete arg command-line-args))
-      (return (substring arg (length ig-cmd-arg))))))
+    (catch 'tag
+      (dolist (arg command-line-args)
+	(when (string-prefix-p ig-cmd-arg arg)
+	  ;; Delete the argument to prevent Emacs from creating a file
+	  (setq command-line-args (delete arg command-line-args))
+	  (throw 'tag (substring arg (length ig-cmd-arg)))))))
 
-;; Use `pcase' to switch by strings, using `equal'
-(pcase (ig-get-profile-arg-value "--ig-profile=")
-  ("update"
-   (require 'ig-install-packages)
-   (ig-packages-manage))
-  ("minimal"
-   (princ "Minimal configuration was loaded\n"))
-  ("profiler"
-   (require 'profiler)
-   (profiler-start 'cpu+mem)
-   (require 'ig-init)
-   (profiler-report)
-   (profiler-stop))
-  (_ (require 'ig-init)))
 
-
+(defun ig-start-init()
+  (pcase (ig-get-profile-arg-value "--ig-profile=")
+    ("update"
+     (require 'ig-install-packages)
+     (ig-packages-manage))
+    ("minimal"
+     (princ "Minimal configuration was loaded\n"))
+    ("profiler"
+     (require 'profiler)
+     (profiler-start 'cpu+mem)
+     (require 'ig-init)
+     (profiler-report)
+     (profiler-stop))
+    (_ (require 'ig-init))))
 
-;; Restore original value
-(setq file-name-handler-alist ig-file-name-handler-alist)
-(setq ig-file-name-handler-alist nil)
+
+(defun ig-packages-init()
+  (defconst package-archives-protocol
+    (if (string= system-type `windows-nt) "http://" "https://")
+    "More often than not GnuTLS doesn't work properly on Windows.")
+  (setq package-archives
+	`(("melpa" . ,(concat package-archives-protocol "melpa.org/packages/"))
+	  ("org" . "http://orgmode.org/elpa/")
+	  ("gnu" . ,(concat package-archives-protocol "elpa.gnu.org/packages/"))))
+  (setq package-user-dir
+	(expand-file-name "elpa" ig-emacs-d))
+  (package-initialize)
+  (setq package-enable-at-startup nil))
+
+(defconst ig-emacs-d
+  ;; `load-file-name' may be null if using `esup' start up profiler, for ex.
+  (file-truename
+   (if load-file-name
+       (file-name-directory load-file-name) user-emacs-directory))
+  "Base config directory.")
+(defconst ig-additional-lisp-dir (expand-file-name "lisp" ig-emacs-d))
+
+(defconst ig-volatile-dir (expand-file-name ".volatile" ig-emacs-d))
+(unless (file-directory-p ig-volatile-dir)
+  (make-directory ig-volatile-dir t))
+
+;; Autoloads
+(defconst ig-generated-autoload-file-name "loaddefs.el")
+(defconst generated-autoload-file (expand-file-name ig-generated-autoload-file-name ig-volatile-dir))
+(add-to-list 'revert-without-query ig-generated-autoload-file-name)
+
+;; https://github.com/abo-abo/oremacs/blob/github/oleh/auto.el
+;;;###autoload
+(defun ig-update-all-autoloads ()
+  "Update `autoload' in directories."
+  (interactive)
+  (cd ig-emacs-d)
+  (when (not (file-exists-p generated-autoload-file))
+    (with-current-buffer (find-file-noselect generated-autoload-file)
+      (insert ";;") ;; create the file with non-zero size to appease autoload
+      (save-buffer)))
+  (mapcar #'update-directory-autoloads
+	  '("" "lisp")))
+
+;; Faster start by disabling special processing temporarily,
+;; especially useful on Cygwin
+(let ((file-name-handler-alist '()))
+  (setq gc-cons-threshold (* 50 1024 1024)
+	backup-inhibited 1)
+  (add-to-list 'load-path ig-additional-lisp-dir)
+  (let ((default-directory ig-additional-lisp-dir))
+    (normal-top-level-add-subdirs-to-load-path))
+  (ig-packages-init)
+  (add-hook 'kill-emacs-hook #'ig-update-all-autoloads)
+  (when (not (file-exists-p generated-autoload-file)) (ig-update-all-autoloads))
+  (load generated-autoload-file nil t)
+  (ig-start-init))
 
 ;;; init.el ends here

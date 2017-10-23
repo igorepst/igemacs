@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 ;;; ig-install-packages.el --- Used in updates
 
 ;;; Commentary:
@@ -12,52 +13,23 @@
 
 
 (defvar ig-packages-req-list
-  '(form-feed
-    persistent-scratch
+  '(delight
+    use-package
+    zenburn-theme
     which-key
-    window-numbering
-    hydra
-    drag-stuff
-    xahk-mode
-    groovy-mode
-    markdown-mode
-    go-mode
-    json-mode
-    magit
-    buffer-move
-    yasnippet
-    highlight-indent-guides
-    ;; flycheck
-    flycheck
-    flycheck-pos-tip
+    company
+    general
+    form-feed
+    org-plus-contrib
+    evil
     ;; ivy
     ivy
-    ivy-rich
     swiper
     counsel
+    hydra
     ivy-hydra
     smex
-    flx
-    ivy-pages
-    ;; org
-    org-plus-contrib
-    org-bullets
-    htmlize
-    ox-mediawiki
-    ;; dired
-    dired-rainbow
-    ;; use-package
-    use-package
-    diminish
-    bind-key
-    ;; company
-    company
-    company-quickhelp
-    ;; LAF
-    alect-themes
-    rainbow-delimiters
-    powerline
-    spaceline)
+    wgrep)
   "List of packages to install.")
 
 
@@ -184,7 +156,7 @@
   "Manage packages."
   (interactive)
   (ig-packages-install-required)
-  (ig-packages-quelpa)
+;;  (ig-packages-quelpa)
   (ig-packages-upgrade-and-clean)
   (ig-packages-print-report)
   (setq ig-packages-install-list nil)

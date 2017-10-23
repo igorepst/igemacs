@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 ;;; ig-fonts.el --- Set right fonts
 
 ;;; Commentary:
@@ -136,7 +137,7 @@
 ;; Override
 ;;;###autoload
 (defun ig-set-font-overrides ()
-  "Change fontset font according to definitions in ig-fonts-mapping.
+  "Change fontset font according to definitions in `ig-fonts-mapping'.
 No checks of any kind are done (font existence, etc.)"
   (let (ig-font-name)
     (dolist (font-override ig-fonts-mapping)

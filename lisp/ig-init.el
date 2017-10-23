@@ -1,201 +1,349 @@
-;;; ig-init.el --- Additional configuration beyond the minimal one
-
-;;; Commentary:
-;; Additional Emacs configuration
-
-
-
-;;; Code:
+;;; -*- lexical-binding: t -*-
 
 ;; The C source should reside in 'src' subdirectory of the
 ;; directory defined here
-(setq source-directory (expand-file-name "c-src" emacs-d))
+(setq source-directory (expand-file-name "c-src" ig-emacs-d))
+;;; Defined in C
+;; Always load newest byte code
+(setq load-prefer-newer t
+      enable-recursive-minibuffers t
+      system-time-locale "C"
+      locale-coding-system 'utf-8)
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-;; pp-macroexpand-last-sexp used to pretty-print macro expansion
-;; https://github.com/jwiegley/use-package
-(setq use-package-enable-imenu-support t)
-(eval-when-compile
-  (require 'use-package))
-(require 'diminish)
-(require 'bind-key)
+(setq frame-title-format
+      '((:eval (let ((bname buffer-file-name))
+		 (cond (bname
+			(concat (when (buffer-modified-p) "+")
+				(file-name-nondirectory bname) " : "
+				(abbreviate-file-name (file-name-directory bname))))
+		       ((eq major-mode 'dired-mode) default-directory)
+		       (t "%b"))))))
+
+;; startup.el - not a package
+(setq initial-buffer-choice t
+      inhibit-startup-screen t
+      initial-scratch-message nil
+      initial-major-mode 'emacs-lisp-mode
+      auto-save-list-file-prefix (expand-file-name ".saves-" ig-volatile-dir))
+
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 
 
-;; Decorations and UI
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(setq inhibit-startup-screen t
-      initial-scratch-message nil
-      inhibit-startup-echo-area-message t
-      initial-major-mode 'emacs-lisp-mode)
+;; Must be set before loading use-package
+(setq use-package-enable-imenu-support t)
+(eval-when-compile
+  (require 'use-package))
 
-(setq enable-recursive-minibuffers t)
-(minibuffer-depth-indicate-mode t)
+;; https://github.com/jwiegley/use-package
+(use-package use-package
+  :config
+  (setq use-package-always-defer t))
 
-(setq-default indicate-empty-lines t)
+;; https://savannah.nongnu.org/projects/delight
+(use-package delight)
 
-(transient-mark-mode 1)
-(delete-selection-mode 1)
-(show-paren-mode 1)
-(column-number-mode 1)
-(save-place-mode 1)
+
 
-(setq scroll-margin 4
-      scroll-step 1
-      scroll-conservatively 10000
-      scroll-preserve-screen-position nil
-      mouse-wheel-scroll-amount '(1 ((shift) . 1))
-      mouse-wheel-progressive-speed nil)
-
-(setq eval-expression-print-length nil
-      eval-expression-print-level nil)
-
-(add-hook 'prog-mode-hook #'electric-pair-local-mode)
-(add-hook 'prog-mode-hook #'goto-address-prog-mode)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-(add-hook 'after-save-hook
-	  'executable-make-buffer-file-executable-if-script-p)
-
-(setq disabled-command-function nil)
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-;; https://github.com/alezost/alect-themes
-(use-package alect-themes
+;; https://github.com/noctuid/general.el
+(use-package general
   :demand t
   :config
-  (setq custom-safe-themes t
-	;; enable alect-themes in 256-colors terminals
-	alect-display-class '((class color) (min-colors 256))
-	alect-overriding-faces
-	'((tooltip ((t (:inherit variable-pitch :background bg+1 :foreground fg-1))))))
-  (load-theme 'alect-dark t))
+  ;; Unbind key before using as a prefix
+  (general-define-key "M-SPC" nil)
+  (general-create-definer ig-leader
+			  :states '(normal insert emacs) :keymaps 'global
+			  :prefix "SPC" :non-normal-prefix "M-SPC")
+  ;; Define prefixes and commands from the C code
+  (ig-leader "w" '(:ignore t :which-key "Window")
+	     "/" '(:ignore t :which-key "Search")
+	     "f" '(:ignore t :which-key "File")
+	     "b" '(:ignore t :which-key "Buffer")
+	     "b k" '((lambda() (interactive) (kill-buffer (current-buffer))) :which-key "Kill current")))
+
+
+
+;; Built-in
+(use-package mule
+  :config
+  ;; use UTF-8 everywhere by default
+  (set-language-environment 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  ;; use default utf-16-le to not alter the clipboard on Windows
+  (set-selection-coding-system
+   (if (eq system-type 'windows-nt) 'utf-16-le 'utf-8))
+  (prefer-coding-system 'utf-8)
+  ;; open .nfo the right way
+  (modify-coding-system-alist 'file "\\.[nN][fF][oO]\\'" 'ibm437))
+
+;; Built-in
+(use-package paren
+  :init
+  (show-paren-mode 1))
+
+;; Built-in
+(use-package elisp-mode
+  :config
+  (delight '((emacs-lisp-mode "Ɛ" :major))))
+
+;; Built-in
+(use-package savehist
+  :demand t
+  :defines savehist-additional-variables
+  :config
+  (setq savehist-save-minibuffer-history t
+	savehist-file (expand-file-name ".emacs-history" ig-volatile-dir))
+  (savehist-mode 1))
+
+;; https://github.com/jwiegley/use-package/issues/203
+;; Built-in
+(use-package "isearch"
+  :delight isearch-mode " 🔎" t
+  :config
+  (setq isearch-allow-scroll t
+	lazy-highlight-cleanup nil
+	lazy-highlight-initial-delay 0)
+  (push 'search-ring savehist-additional-variables)
+  (push 'regexp-search-ring savehist-additional-variables))
+
+;; Built-in
+(use-package recentf
+  :demand t
+  :config
+  (setq recentf-max-saved-items 100
+	recentf-save-file (expand-file-name ".recentf" ig-volatile-dir)
+	;; disable recentf-cleanup (may cause problems with remote files)
+        recentf-auto-cleanup 'never)
+  (recentf-mode 1))
+
+;; Built-in
+(use-package custom
+  :config
+  (setq custom-file (expand-file-name "custom.el" ig-volatile-dir)
+	custom-safe-themes t))
+
+;; Built-in
+(use-package saveplace
+  :demand t
+  :config
+  (setq save-place-file (expand-file-name "places" ig-volatile-dir))
+  (save-place-mode 1))
+
+;; Built-in
+(use-package novice
+  :init
+  (setq disabled-command-function nil))
+
+;; Built-in
+(use-package bookmark
+  :config
+  (setq bookmark-default-file (expand-file-name "bookmark" ig-volatile-dir)))
+
+;; Built-in
+(use-package tramp-cache
+  :config
+  (setq tramp-persistency-file-name (expand-file-name "tramp" ig-volatile-dir)))
+
+;; Built-in
+(use-package url
+  :config
+  (setq url-configuration-directory (expand-file-name "url" ig-volatile-dir)
+	url-cookie-file (expand-file-name "cookies" url-configuration-directory)))
+
+;; Built-in
+(use-package server
+  :config
+  (setq server-auth-dir ig-volatile-dir))
+
+;; Built-in
+(use-package nsm
+  :config
+  (setq nsm-settings-file (expand-file-name "network-security.data"
+					    ig-volatile-dir)))
+;; Built-in
+(use-package x-win
+  :config
+  (defun emacs-session-filename (session-id)
+    (expand-file-name (concat "session." session-id) ig-volatile-dir)))
+
+;; Built-in
+(use-package mb-depth
+  :init
+  (minibuffer-depth-indicate-mode 1))
+
+;; Built-in
+(use-package delsel
+  :init
+  (delete-selection-mode 1))
+
+(use-package goto-addr
+  :init
+  (add-hook 'prog-mode-hook #'goto-address-prog-mode))
+
+
+
+;; https://github.com/emacs-evil/evil
+(use-package evil
+  :demand t
+  :init
+  (evil-mode 1)
+  :general
+  (ig-leader "/ /" #'evil-search-forward))
+
+;; http://www.dr-qubit.org/undo-tree/undo-tree.el
+(use-package undo-tree
+  :delight undo-tree-mode nil t)
+
+
+
+;; http://orgmode.org/
+(use-package org
+  :init
+  (defvar ig-org-directory "~/org")
+  :config
+  (setq org-special-ctrl-a/e t
+	org-special-ctrl-k t))
+
+
+
+;; https://github.com/abo-abo/swiper
+(use-package ivy
+  :demand t
+  :delight ivy-mode nil t
+  :config
+  (setq ivy-use-virtual-buffers t
+	ivy-height 10
+	ivy-count-format "(%d/%d) "
+	ivy-wrap t)
+  (ivy-mode 1)
+  :general
+  ("C-c C-r" #'ivy-resume)
+  (ig-leader "b SPC" '(ivy-switch-buffer :which-key "Switch")))
+
+;; https://github.com/abo-abo/swiper
+(use-package counsel
+  :general
+  (ig-leader 
+   "/ j" #'counsel-git-grep
+   "/ r" #'counsel-rg
+   "/ s" #'counsel-grep-or-swiper
+   "f l" #'counsel-locate
+   "f f" #'counsel-find-file
+   "f g" #'counsel-git
+   "SPC" #'counsel-M-x)
+  ("M-x" #'counsel-M-x
+   "C-s" #'counsel-grep-or-swiper
+   "<f2> i" #'counsel-info-lookup-symbol
+   "<f2> u" #'counsel-unicode-char)
+  (:keymaps 'help-map
+  	    "f" #'counsel-describe-function
+  	    "v" #'counsel-describe-variable
+  	    "l" #'counsel-find-library)
+  (:keymaps 'read-expression-map
+  	    "C-r" #'counsel-expression-history))
+
+;; https://github.com/abo-abo/hydra
+(use-package ig-hydra
+  :general
+  (ig-leader
+   "h" '(:ignore t :which-key "Hydra")
+   "h v" '(ig-hydra-ivy-views/body :which-key "Ivy views")))
+
+;; Requirement for counsel-M-x
+;; https://github.com/nonsequitur/smex
+(use-package smex
+  :config
+  (setq smex-save-file (expand-file-name "smex-save" ig-volatile-dir)
+	smex-history-length 10))
+
+
+
+;; https://github.com/justbur/emacs-which-key/
+(use-package which-key
+  :demand t
+  :delight which-key-mode nil t
+  :config
+  (setq which-key-sort-order 'which-key-description-order
+	which-key-idle-delay 0.3)
+  (which-key-mode))
+
+
+
+;; https://github.com/bbatsov/zenburn-emacs
+(use-package zenburn-theme
+  :demand t
+  :config
+  (load-theme 'zenburn t))
 
 (use-package ig-fonts
   :demand t
   :config
   (ig-set-ui-fonts))
 
-(use-package ig-modeline)
+;; https://github.com/wasamasa/form-feed
+(use-package form-feed
+  :delight form-feed-mode nil t
+  :init
+  (add-hook 'emacs-lisp-mode-hook 'form-feed-mode))
 
-(setq frame-title-format
-      '((:eval (let ((bname buffer-file-name))
-		 (if bname
-		     (concat (if (buffer-modified-p) "+" "")
-			     (file-name-nondirectory bname) " : "
-			     (abbreviate-file-name
-			      (file-name-directory bname))) "%b")))))
-
-(setq mouse-yank-at-point t) ;yank at point instead of at click
-
-
-
-;; Additional code
-(setq apropos-do-all t ;; search more extensively, for ex., search for noninteractive f. too
-      require-final-newline t
-      sentence-end-double-space nil
-      load-prefer-newer t
-      save-interprogram-paste-before-kill t
-      select-enable-clipboard t
-      select-enable-primary t
-      x-select-enable-clipboard-manager nil
-      help-window-select t
-      recenter-positions '(top middle bottom) ;; C-l (recenter-top-bottom starts from top)
-      x-gtk-use-system-tooltips nil
-      use-dialog-box nil
-      echo-keystrokes 0.01)
-
-(recentf-mode 1)
-(global-hl-line-mode 1)
-(global-prettify-symbols-mode 1)
-(add-hook 'emacs-lisp-mode-hook
-	  (lambda ()
-	    (push '("<=" . ?≤) prettify-symbols-alist)
-	    (push '(">=" . ?≥) prettify-symbols-alist)))
-
-(setq history-length 250
-      savehist-save-minibuffer-history nil
-      savehist-additional-variables
-      '(search-ring regexp-search-ring extended-command-history
-		    kill-ring shell-command-history
-		    read-expression-history file-name-history))
-(savehist-mode 1)
-
-(delete-selection-mode 1)
-
-;; http://www.emacswiki.org/emacs/DebuggingParentheses
-;; Check parens on save. Won't save until the error is fixed
-(add-hook 'emacs-lisp-mode-hook
-	  (lambda ()
-	    (add-hook 'local-write-file-hooks
-		      'check-parens)))
+(use-package prettify-symbols-mode
+  :init
+  (setq prettify-symbols-unprettify-at-point 'right-edge)
+  (global-prettify-symbols-mode 1)
+  (add-hook 'prog-mode-hook
+	    (lambda ()
+	      (push '("<=" . ?≤) prettify-symbols-alist)
+	      (push '(">=" . ?≥) prettify-symbols-alist))))
 
 
 
-;; http://emacsredux.com/blog/2013/07/24/highlight-comment-annotations
-(defun font-lock-comment-annotations ()
-  "Highlight a bunch of well known comment annotations.
-This functions should be added to the hooks of major modes for programming."
-  (font-lock-add-keywords
-   nil '(("\\<\\(FIX\\(ME\\)?\\|TODO\\|OPTIMIZE\\|HACK\\|REFACTOR\\|NOSONAR\\|NOCOMMIT\\)"
-          1 font-lock-warning-face t))))
-
-(add-hook 'prog-mode-hook 'font-lock-comment-annotations)
-
-(defun ig-font-lock-log-file ()
-  "Highlight severity keywords in log files."
-  (font-lock-add-keywords nil '(("\\<\\(ERROR\\|FATAL\\)\\>" 1 font-lock-warning-face t)))
-  (font-lock-add-keywords nil '(("\\<\\(WARN\\)\\>" 1 font-lock-keyword-face t)))
-  (font-lock-add-keywords nil '(("\\<\\(INFO\\)\\>" 1 font-lock-function-name-face t)))
-  (font-lock-add-keywords nil '(("\\<\\(DEBUG\\|TRACE\\)\\>" 1 font-lock-constant-face t))))
-
-(add-to-list 'auto-mode-alist
-             '("\\.[Ll][Oo][Gg]\\'" . (lambda () (ig-font-lock-log-file))))
+;; http://company-mode.github.io/
+;; (use-package company
+;;   :delight company-mode nil t
+;;   :init
+;;   (add-hook 'prog-mode-hook #'company-mode)
+;;   (add-hook 'eshell-mode-hook #'company-mode)
+;;   (add-hook 'shell-mode-hook #'company-mode)
+;;   (add-hook 'org-mode-hook #'company-mode)
+;;   :config
+;;   (setq company-backends '((company-dabbrev-code company-dabbrev company-keywords company-capf company-files) company-bbdb company-nxml company-css)
+;; 	company-require-match nil))
 
 
 
-;; Bash & zsh
-(defconst ig-sh-files
-  '(".aliases"))
-(defconst ig-bash-files '(".bashrc" ".bash_logout" "bash.bashrc" ".inputrc"))
-(defconst ig-zsh-files
-  '(".zhistory" "zlogin" "zlogout" "zpreztorc" "zprofile" "zshenv" "zshrc"
-    "init.zsh"))
-
-(defun ig-add-list-to-sh-mode (names)
-  "Add NAMES to `sh-mode'."
-  (dolist (name names)
-    (add-to-list 'auto-mode-alist `(,(format "\\%s\\'" name) . sh-mode))))
-
-(ig-add-list-to-sh-mode ig-sh-files)
-(ig-add-list-to-sh-mode ig-bash-files)
-(ig-add-list-to-sh-mode ig-zsh-files)
-
-(defun ig-sh-set-shell (names shell-name buf-name)
-  "Loop on NAMES to set SHELL-NAME, comparing to BUF-NAME."
-  (dolist (name names)
-    (when (string= buf-name name)
-      (sh-set-shell shell-name) t)))
-
-(add-hook 'sh-mode-hook
-          (lambda ()
-	    (when buffer-file-name
-	      (let ((buf-name (file-name-nondirectory buffer-file-name)))
-		(when (not (ig-sh-set-shell ig-sh-files "sh" buf-name))
-		  (when (not (ig-sh-set-shell ig-bash-files "bash" buf-name))
-		    (ig-sh-set-shell ig-zsh-files "zsh" buf-name)))))))
+;; Buil-in
+(use-package dired
+  :config
+  (setq dired-recursive-copies 'always
+	dired-recursive-deletes 'always
+	dired-dwim-target t)
+  (defun ig-dired-maybe-visit-new-buffer()
+    "Always leave one Dired buffer open."
+    (let ((file (dired-get-file-for-visit)))
+      (if (file-directory-p file)
+	  (find-alternate-file file)
+	(find-file (file-name-sans-versions file t)))))
+  (defun ig-dired-mouse-find-file (event)
+    "In Dired, visit the file or directory name you click on in the same window."
+    (interactive "e")
+    (let ((window (posn-window (event-end event)))
+	  (pos (posn-point (event-end event))))
+      ;; In case the active window is NOT where the click was done,
+      ;; as the focus stays where it was
+      (select-window window)
+      (set-buffer (window-buffer window))
+      (goto-char pos)
+      (ig-dired-maybe-visit-new-buffer)))
+  :general
+  (:keymaps 'dired-mode-map
+	    [mouse-2] #'ig-dired-mouse-find-file
+	    [remap dired-find-file] #'((lambda() (interactive) (ig-dired-maybe-visit-new-buffer)))
+	    [remap dired-up-directory] '((lambda() (interactive) (find-alternate-file "..")))))
 
 
 
-(setq visual-line-fringe-indicators '(left-curly-arrow nil))
-(add-hook 'org-mode-hook 'turn-on-visual-line-mode)
-(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-
-
-
-(use-package ig-packages)
-
+(use-package ig-utils)
 
 (provide 'ig-init)
-
-;;; ig-init.el ends here

@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 ;;; ig-hydra.el --- Various hydras
 
 ;;; Commentary:
@@ -6,77 +7,20 @@
 ;;; Code:
 
 (require 'hydra)
-(require 'hydra-examples)
 
-(setq lv-use-separator t)
+(defun ig-hydra-ivy-views-helper (arg)
+  "Helper to call `ivy-set-view-recur' with ARG."
+  (delete-other-windows)
+  (ivy-set-view-recur arg))
 
-
-
-(defhydra ig-hydra-matching-lines (:hint nil :color blue)
-  "
-Matching lines:
-_o_: occur       _d_: delete dups      _e_: reverse region
-_f_: flush       _s_: sort             _h_: highlight
-_k_: keep        _r_: reverse sort     _SPC_: quit
-"
-  ("o" occur)
-  ("f" (call-interactively 'ig-delete-matching-lines))
-  ("k" (call-interactively 'ig-delete-non-matching-lines))
-  ("d" ig-delete-adjacent-duplicate-lines)
-  ("s" ig-sort-lines)
-  ("r" (ig-sort-lines t))
-  ("e" ig-reverse-region)
-  ("h" highlight-lines-matching-regexp)
-  ("SPC" nil))
-
-
-
-(defvar ig-dired-sort-reverse-p nil)
-(defhydra ig-hydra-dired-sort (:hint nil :color blue
-				     :body-pre (setq ig-dired-sort-reverse-p nil))
-  "
-Sort dired by:
-_n_: name         _t_: time
-_s_: size         _r_: reverse
-_e_: extension    _SPC_: quit
-"
-  ("n" (ig-dired-sort "-v" ig-dired-sort-reverse-p))
-  ("s" (ig-dired-sort "-S" ig-dired-sort-reverse-p))
-  ("e" (ig-dired-sort "-X" ig-dired-sort-reverse-p))
-  ("t" (ig-dired-sort "-t" ig-dired-sort-reverse-p))
-  ("r" (setq ig-dired-sort-reverse-p t) :color pink)
-  ("SPC" nil))
-
-
-
-(defhydra ig-hydra-windows (:color pink
-				   :hint nil)
-  "
-      ^Move          ^^^^^Swap      ^^^Resize                  ^^^^^^Del
-      _<up>_            ^^^_k_         ^^_K_      ^_r_: new ⮞     _d_: cur     _SPC_: quit
-_<left>_   _<right>_    _h_   _l_     _H_   _L_    _n_: new ⮟     _x_: buf
-     _<down>_           ^^^_j_         ^^_J_      ^_b_: bury buf  _o_: other
-"
-  ("<left>" windmove-left)
-  ("<down>" windmove-down)
-  ("<up>" windmove-up)
-  ("<right>" windmove-right)
-  ("h" buf-move-left)
-  ("j" buf-move-down)
-  ("k" buf-move-up)
-  ("l" buf-move-right)
-  ("H" hydra-move-splitter-left)
-  ("J" hydra-move-splitter-down)
-  ("K" hydra-move-splitter-up)
-  ("L" hydra-move-splitter-right)
-  ("r" (lambda () (interactive) (split-window-right)(windmove-right)) :color blue)
-  ("n" (lambda () (interactive) (split-window-below)(windmove-down)) :color blue)
-  ("d" delete-window :color blue)
-  ("o" delete-other-windows :color blue)
-  ("x" kill-this-buffer :color blue)
-  ("b" bury-buffer :color blue)
-  ("SPC" hydra-keyboard-quit :color blue))
-
+(defhydra ig-hydra-ivy-views (:color teal)
+    ("c" (ig-hydra-ivy-views-helper  `(horz
+		      (file ,(expand-file-name "ig-init.el" ig-additional-lisp-dir))
+		      (file "~/.emacs.d-various/.emacs.d-new/lisp"))) "copy config")
+    ("o" (ig-hydra-ivy-views-helper `(horz
+		      (file ,(expand-file-name "org-tutorial.org" ig-org-directory))
+		      (sexp (eww "http://orgmode.org/guide/index.html#Top")))) "Org tutorial")
+    ("SPC" nil))
 
 (provide 'ig-hydra)
 
