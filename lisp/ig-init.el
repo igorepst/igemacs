@@ -1,5 +1,7 @@
 ;;; -*- lexical-binding: t -*-
 
+(defconst ig-home-dir (getenv "HOME"))
+
 ;; The C source should reside in 'src' subdirectory of the
 ;; directory defined here
 (setq source-directory (expand-file-name "c-src" ig-emacs-d))
@@ -8,7 +10,10 @@
 (setq load-prefer-newer t
       enable-recursive-minibuffers t
       system-time-locale "C"
-      locale-coding-system 'utf-8)
+      locale-coding-system 'utf-8
+      completion-ignore-case t
+      read-buffer-completion-ignore-case t
+      use-dialog-box nil)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (setq frame-title-format
@@ -37,7 +42,7 @@
   (require 'use-package))
 
 ;; https://github.com/jwiegley/use-package
-(use-package use-package
+(use-package use-package  
   :config
   (setq use-package-always-defer t))
 
@@ -169,6 +174,11 @@
     (expand-file-name (concat "session." session-id) ig-volatile-dir)))
 
 ;; Built-in
+(use-package minibuffer
+  :config
+  (setq read-file-name-completion-ignore-case t))
+
+;; Built-in
 (use-package mb-depth
   :init
   (minibuffer-depth-indicate-mode 1))
@@ -179,8 +189,7 @@
   (delete-selection-mode 1))
 
 (use-package goto-addr
-  :init
-  (add-hook 'prog-mode-hook #'goto-address-prog-mode))
+  :hook (prog-mode . goto-address-mode))
 
 
 
@@ -189,6 +198,8 @@
   :demand t
   :init
   (evil-mode 1)
+  :config
+  (add-to-list 'evil-buffer-regexps '("^\\*scratch\\*" . insert)) 
   :general
   (ig-leader "/ /" #'evil-search-forward))
 
@@ -201,10 +212,16 @@
 ;; http://orgmode.org/
 (use-package org
   :init
-  (defvar ig-org-directory "~/org")
+  (defvar ig-org-directory (expand-file-name "org/" ig-home-dir))
+  (defun ig-org-list-dir()
+    (interactive)
+    (let ((default-directory ig-org-directory))
+      (call-interactively #'find-file)))
   :config
   (setq org-special-ctrl-a/e t
-	org-special-ctrl-k t))
+	org-special-ctrl-k t)
+  :general
+  (ig-leader "f o" #'ig-org-list-dir))
 
 
 
@@ -246,6 +263,7 @@
 
 ;; https://github.com/abo-abo/hydra
 (use-package ig-hydra
+  :commands ig-hydra-ivy-views/body
   :general
   (ig-leader
    "h" '(:ignore t :which-key "Hydra")
@@ -285,8 +303,7 @@
 ;; https://github.com/wasamasa/form-feed
 (use-package form-feed
   :delight form-feed-mode nil t
-  :init
-  (add-hook 'emacs-lisp-mode-hook 'form-feed-mode))
+  :hook (emacs-lisp-mode . form-feed-mode))
 
 (use-package prettify-symbols-mode
   :init
@@ -300,50 +317,59 @@
 
 
 ;; http://company-mode.github.io/
-;; (use-package company
-;;   :delight company-mode nil t
-;;   :init
-;;   (add-hook 'prog-mode-hook #'company-mode)
-;;   (add-hook 'eshell-mode-hook #'company-mode)
-;;   (add-hook 'shell-mode-hook #'company-mode)
-;;   (add-hook 'org-mode-hook #'company-mode)
-;;   :config
-;;   (setq company-backends '((company-dabbrev-code company-dabbrev company-keywords company-capf company-files) company-bbdb company-nxml company-css)
-;; 	company-require-match nil))
+(use-package company
+  :delight company-mode nil t
+  :hook ((prog-mode eshell-mode shell-mode org-mode) . company-mode)
+  :config
+  (setq company-backends '((company-capf company-dabbrev company-keywords company-files)
+			   company-bbdb company-nxml company-css)
+	company-require-match nil
+	company-auto-complete nil
+	company-idle-delay .1
+	company-tooltip-idle-delay .1
+	company-minimum-prefix-length 3
+	company-selection-wrap-around t
+	company-show-numbers t
+	company-tooltip-limit 20
+	company-tooltip-flip-when-above t
+	company-transformers #'(company-sort-by-occurrence)
+	company-tooltip-offset-display 'lines
+	company-search-regexp-function #'company-search-flex-regexp))
+
+(use-package company-dabbrev
+  :after company
+  :config
+  (setq company-dabbrev-ignore-case t
+	company-dabbrev-downcase nil
+	company-dabbrev-minimum-length 3
+	company-dabbrev-other-buffers 'all
+	company-dabbrev-ignore-buffers (lambda (arg) nil)
+	company-dabbrev-char-regexp "\\(\\sw\\|\\s_\\|_\\|-\\)"))
 
 
 
-;; Buil-in
-(use-package dired
+;; Built-in
+(use-package eshell
   :config
-  (setq dired-recursive-copies 'always
-	dired-recursive-deletes 'always
-	dired-dwim-target t)
-  (defun ig-dired-maybe-visit-new-buffer()
-    "Always leave one Dired buffer open."
-    (let ((file (dired-get-file-for-visit)))
-      (if (file-directory-p file)
-	  (find-alternate-file file)
-	(find-file (file-name-sans-versions file t)))))
-  (defun ig-dired-mouse-find-file (event)
-    "In Dired, visit the file or directory name you click on in the same window."
-    (interactive "e")
-    (let ((window (posn-window (event-end event)))
-	  (pos (posn-point (event-end event))))
-      ;; In case the active window is NOT where the click was done,
-      ;; as the focus stays where it was
-      (select-window window)
-      (set-buffer (window-buffer window))
-      (goto-char pos)
-      (ig-dired-maybe-visit-new-buffer)))
-  :general
-  (:keymaps 'dired-mode-map
-	    [mouse-2] #'ig-dired-mouse-find-file
-	    [remap dired-find-file] #'((lambda() (interactive) (ig-dired-maybe-visit-new-buffer)))
-	    [remap dired-up-directory] '((lambda() (interactive) (find-alternate-file "..")))))
+  (setq eshell-directory-name (expand-file-name "eshell" ig-volatile-dir)))
+
+;; Built-in
+(use-package em-alias
+  :config
+  (setq eshell-aliases-file (expand-file-name "eshell-aliases" ig-etc-dir)))
+
+
+
+;; Built-in
+(use-package ediff-wind
+  :config
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain
+	ediff-split-window-function 'split-window-horizontally))
 
 
 
 (use-package ig-utils)
+
+(use-package ig-dired)
 
 (provide 'ig-init)

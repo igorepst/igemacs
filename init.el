@@ -67,6 +67,10 @@ to prevent Emacs from complaining about 'Unknown option'."
 (unless (file-directory-p ig-volatile-dir)
   (make-directory ig-volatile-dir t))
 
+(defconst ig-etc-dir (expand-file-name "etc" ig-emacs-d))
+(unless (file-directory-p ig-etc-dir)
+  (make-directory ig-etc-dir t))
+
 ;; Autoloads
 (defconst ig-generated-autoload-file-name "loaddefs.el")
 (defconst generated-autoload-file (expand-file-name ig-generated-autoload-file-name ig-volatile-dir))

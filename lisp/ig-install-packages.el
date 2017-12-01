@@ -22,6 +22,7 @@
     form-feed
     org-plus-contrib
     evil
+    dired-rainbow
     ;; ivy
     ivy
     swiper
