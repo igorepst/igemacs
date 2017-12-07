@@ -23,6 +23,8 @@
     org-plus-contrib
     evil
     dired-rainbow
+    rainbow-mode
+    make-color
     ;; ivy
     ivy
     swiper

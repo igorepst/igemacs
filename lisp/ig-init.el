@@ -12,6 +12,8 @@
       system-time-locale "C"
       locale-coding-system 'utf-8
       completion-ignore-case t
+      ;; Fake extension for the sake of coloring in dired
+      completion-ignored-extensions '("ig-fake-ext")
       read-buffer-completion-ignore-case t
       use-dialog-box nil)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -42,7 +44,7 @@
   (require 'use-package))
 
 ;; https://github.com/jwiegley/use-package
-(use-package use-package  
+(use-package use-package
   :config
   (setq use-package-always-defer t))
 
@@ -229,12 +231,13 @@
 (use-package ivy
   :demand t
   :delight ivy-mode nil t
+  :init
+  (ivy-mode 1)
   :config
   (setq ivy-use-virtual-buffers t
 	ivy-height 10
 	ivy-count-format "(%d/%d) "
 	ivy-wrap t)
-  (ivy-mode 1)
   :general
   ("C-c C-r" #'ivy-resume)
   (ig-leader "b SPC" '(ivy-switch-buffer :which-key "Switch")))
@@ -263,11 +266,12 @@
 
 ;; https://github.com/abo-abo/hydra
 (use-package ig-hydra
-  :commands ig-hydra-ivy-views/body
+  :commands (ig-hydra-ivy-views/body hydra-dired/body)
   :general
   (ig-leader
    "h" '(:ignore t :which-key "Hydra")
-   "h v" '(ig-hydra-ivy-views/body :which-key "Ivy views")))
+   "h v" '(ig-hydra-ivy-views/body :which-key "Ivy views")
+   "h d" '(hydra-dired/body :which-key "Dired")))
 
 ;; Requirement for counsel-M-x
 ;; https://github.com/nonsequitur/smex
@@ -303,7 +307,7 @@
 ;; https://github.com/wasamasa/form-feed
 (use-package form-feed
   :delight form-feed-mode nil t
-  :hook (emacs-lisp-mode . form-feed-mode))
+  :hook ((emacs-lisp-mode help-mode) . form-feed-mode))
 
 (use-package prettify-symbols-mode
   :init
@@ -370,6 +374,7 @@
 
 (use-package ig-utils)
 
-(use-package ig-dired)
+(use-package ig-dired
+  :demand t)
 
 (provide 'ig-init)
