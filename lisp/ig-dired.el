@@ -31,6 +31,7 @@ The sorting mode will be used from now on."
   (cdr (assoc arg zenburn-default-colors-alist)))
 
 (use-package dired-rainbow
+  :after dired
   :config
   (setq dired-rainbow-date-regexp (concat "\\(?:[0-3][0-9]/[0-1][0-9]/[0-9][0-9]"
 					  ig-time-style-space "[0-2][0-9]:[0-5][0-9]\\)"))
