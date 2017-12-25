@@ -25,6 +25,7 @@
     dired-rainbow
     rainbow-mode
     make-color
+    htmlize
     ;; ivy
     ivy
     swiper

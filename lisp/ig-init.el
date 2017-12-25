@@ -149,6 +149,21 @@
   (setq bookmark-default-file (expand-file-name "bookmark" ig-volatile-dir)))
 
 ;; Built-in
+(use-package menu-bar
+  :config
+  (menu-bar-mode -1))
+
+;; Built-in
+(use-package tool-bar
+  :config
+  (tool-bar-mode -1))
+
+;; Built-in
+(use-package scroll-bar
+  :config
+  (scroll-bar-mode -1))
+
+;; Built-in
 (use-package tramp-cache
   :config
   (setq tramp-persistency-file-name (expand-file-name "tramp" ig-volatile-dir)))
@@ -214,7 +229,7 @@
 ;; http://orgmode.org/
 (use-package org
   :init
-  (defvar ig-org-directory (expand-file-name "org/" ig-home-dir))
+  (defvar ig-org-directory (expand-file-name ".org/" ig-home-dir))
   (defun ig-org-list-dir()
     (interactive)
     (let ((default-directory ig-org-directory))
