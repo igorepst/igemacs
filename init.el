@@ -48,7 +48,7 @@ to prevent Emacs from complaining about 'Unknown option'."
     "More often than not GnuTLS doesn't work properly on Windows.")
   (setq package-archives
 	`(("melpa" . ,(concat package-archives-protocol "melpa.org/packages/"))
-	  ("org" . "http://orgmode.org/elpa/")
+	  ("org" . ,(concat package-archives-protocol "orgmode.org/elpa/"))
 	  ("gnu" . ,(concat package-archives-protocol "elpa.gnu.org/packages/"))))
   (setq package-user-dir
 	(expand-file-name "elpa" ig-emacs-d))
